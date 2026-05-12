@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<!-- saved from url=(0044)file:///C:/Users/USER/Downloads/index_1.html -->
+<html lang="zh-TW"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三盛公司派車登記系統</title>
+<script src="./三盛公司派車登記系統_files/supabase-js@2"></script>
+<link href="./三盛公司派車登記系統_files/css2" rel="stylesheet">
+<style>
+:root{
+  --p:#1d4ed8;--pl:#3b82f6;--pd:#1e3a8a;--pbg:#eff6ff;
+  --ok:#10b981;--okbg:#ecfdf5;
+  --err:#ef4444;--errbg:#fef2f2;
+  --warn:#f59e0b;--warnbg:#fffbeb;
+  --g50:#f9fafb;--g100:#f3f4f6;--g200:#e5e7eb;--g300:#d1d5db;
+  --g400:#9ca3af;--g500:#6b7280;--g600:#4b5563;--g700:#374151;--g800:#1f2937;--g900:#111827;
+  --w:#fff;--r:8px;--rl:12px;--rxl:18px;
+  --sh:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);
+  --sh2:0 4px 6px rgba(0,0,0,.07);--sh3:0 10px 15px rgba(0,0,0,.1);
+  --sh4:0 20px 25px rgba(0,0,0,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--g50);color:var(--g800);font-size:14px;line-height:1.5;min-height:100vh;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--g100);}
+::-webkit-scrollbar-thumb{background:var(--g300);border-radius:99px;}
+
+/* ═══ LOGIN ═══ */
+#login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+  background:linear-gradient(135deg,#1d4ed8,#1e3a8a 50%,#0f172a);}
+.login-card{background:var(--w);border-radius:var(--rxl);padding:40px 36px;width:100%;max-width:400px;
+  box-shadow:var(--sh4);animation:cardIn .5s cubic-bezier(.34,1.56,.64,1);}
+@keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(.96);}to{opacity:1;transform:none;}}
+.lc-logo{text-align:center;margin-bottom:28px;}
+.lc-icon{width:60px;height:60px;background:linear-gradient(135deg,var(--p),var(--pd));border-radius:16px;
+  display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 14px;
+  box-shadow:0 8px 20px rgba(29,78,216,.3);}
+.lc-title{font-size:18px;font-weight:800;color:var(--g900);line-height:1.3;}
+.lc-sub{font-size:12px;color:var(--g500);margin-top:4px;}
+.role-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;}
+.rt{padding:10px 8px;border-radius:var(--r);border:2px solid var(--g200);background:var(--w);
+  cursor:pointer;text-align:center;transition:all .15s;font-weight:600;font-size:12px;color:var(--g500);}
+.rt:hover{border-color:var(--pl);color:var(--p);}
+.rt.on{border-color:var(--p);background:var(--pbg);color:var(--p);}
+.rt-ico{font-size:20px;display:block;margin-bottom:4px;}
+.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:14px;}
+.fg label{font-size:11px;font-weight:700;color:var(--g700);}
+.iw{position:relative;}
+.ii{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--g400);pointer-events:none;}
+.fi{width:100%;padding:10px 12px 10px 36px;border:1.5px solid var(--g200);border-radius:var(--r);
+  font-size:14px;font-family:'Noto Sans TC',sans-serif;transition:all .15s;outline:none;background:var(--w);}
+.fi:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(29,78,216,.08);}
+.fi.no-icon{padding-left:12px;}
+.lerr{display:none;background:var(--errbg);border:1px solid #fca5a5;border-radius:var(--r);
+  padding:9px 12px;font-size:12px;color:var(--err);margin-bottom:12px;}
+.lerr.show{display:block;}
+.lbtn{width:100%;padding:12px;border-radius:var(--r);border:none;cursor:pointer;font-size:14px;font-weight:700;
+  font-family:'Noto Sans TC',sans-serif;background:linear-gradient(135deg,var(--p),var(--pd));
+  color:var(--w);transition:all .15s;box-shadow:0 4px 12px rgba(29,78,216,.25);margin-top:6px;}
+.lbtn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(29,78,216,.3);}
+.lbtn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.lhint{text-align:center;font-size:11px;color:var(--g400);margin-top:16px;line-height:1.9;}
+.lhint code{background:var(--g100);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:10px;}
+
+/* ═══ APP ═══ */
+#app{display:none;min-height:100vh;}
+#app.show{display:block;}
+.topbar{background:linear-gradient(90deg,#1d4ed8,#1e3a8a);color:var(--w);height:54px;
+  display:flex;align-items:center;justify-content:space-between;padding:0 22px;
+  position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+.tb-l{display:flex;align-items:center;gap:10px;}
+.tb-logo{font-size:16px;font-weight:800;}
+.tb-badge{background:rgba(255,255,255,.15);font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;}
+.tb-r{display:flex;align-items:center;gap:8px;}
+.tb-user{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border-radius:var(--r);padding:4px 10px;font-size:12px;font-weight:500;}
+.tb-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#000;}
+.tb-btn{padding:5px 12px;border-radius:var(--r);border:1.5px solid rgba(255,255,255,.3);background:transparent;
+  color:var(--w);font-size:12px;font-weight:600;cursor:pointer;font-family:'Noto Sans TC',sans-serif;}
+.tb-btn:hover{background:rgba(255,255,255,.15);}
+.subnav{background:var(--w);border-bottom:1px solid var(--g200);display:flex;padding:0 22px;
+  position:sticky;top:54px;z-index:90;overflow-x:auto;}
+.subnav::-webkit-scrollbar{display:none;}
+.sn{padding:12px 14px;font-size:13px;font-weight:600;cursor:pointer;border-bottom:2.5px solid transparent;
+  color:var(--g500);white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:5px;}
+.sn:hover{color:var(--p);}
+.sn.active{border-bottom-color:var(--p);color:var(--p);}
+.sn-dot{background:var(--err);color:var(--w);font-size:9px;font-weight:700;padding:1px 5px;border-radius:20px;}
+.content{padding:22px;max-width:1380px;margin:0 auto;}
+.page{display:none;}
+.page.active{display:block;}
+
+/* ═══ CARDS ═══ */
+.card{background:var(--w);border-radius:var(--rl);box-shadow:var(--sh);border:1px solid var(--g100);}
+.card-hdr{padding:14px 18px;border-bottom:1px solid var(--g100);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:14px;font-weight:700;color:var(--g900);display:flex;align-items:center;gap:6px;}
+.card-body{padding:18px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
+.stat{background:var(--w);border-radius:var(--rl);padding:16px;border:1px solid var(--g100);box-shadow:var(--sh);
+  position:relative;overflow:hidden;transition:all .15s;}
+.stat:hover{transform:translateY(-2px);box-shadow:var(--sh2);}
+.stat-ico{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:32px;opacity:.07;}
+.stat-lbl{font-size:10px;color:var(--g500);font-weight:700;letter-spacing:.4px;text-transform:uppercase;}
+.stat-val{font-size:26px;font-weight:900;margin:4px 0 2px;font-family:'JetBrains Mono',monospace;}
+.stat-sub{font-size:11px;color:var(--g400);}
+.c-blue{color:var(--p);}.c-green{color:var(--ok);}.c-amber{color:var(--warn);}.c-red{color:var(--err);}
+
+/* ═══ FORM ═══ */
+.ff{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;}
+.ff label{font-size:11px;font-weight:700;color:var(--g700);}
+.ffi,.ffs,.ffta{padding:9px 11px;border:1.5px solid var(--g200);border-radius:var(--r);font-size:13px;
+  font-family:'Noto Sans TC',sans-serif;transition:all .15s;outline:none;background:var(--w);color:var(--g900);width:100%;}
+.ffi:focus,.ffs:focus,.ffta:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(29,78,216,.08);}
+.ffta{resize:vertical;min-height:68px;}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.cb-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
+.cbi{display:flex;align-items:center;gap:5px;background:var(--g50);border:1.5px solid var(--g200);
+  border-radius:7px;padding:5px 11px;cursor:pointer;font-size:12px;font-weight:500;color:var(--g700);
+  transition:all .15s;user-select:none;}
+.cbi:hover{border-color:var(--pl);color:var(--p);}
+.cbi.on{background:var(--pbg);border-color:var(--p);color:var(--p);}
+.cbck{width:13px;height:13px;border:2px solid var(--g300);border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;}
+.cbi.on .cbck{background:var(--p);border-color:var(--p);}
+.cbi.on .cbck::after{content:'✓';font-size:8px;color:white;font-weight:800;}
+
+/* ═══ BUTTONS ═══ */
+.btn{padding:7px 14px;border-radius:var(--r);border:none;cursor:pointer;font-size:12px;font-weight:600;
+  font-family:'Noto Sans TC',sans-serif;transition:all .15s;display:inline-flex;align-items:center;gap:4px;}
+.btn:active{transform:scale(.97);}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.btn-p{background:var(--p);color:var(--w);}
+.btn-p:hover{background:var(--pd);}
+.btn-ok{background:var(--ok);color:var(--w);}
+.btn-err{background:var(--err);color:var(--w);}
+.btn-warn{background:var(--warn);color:var(--w);}
+.btn-ghost{background:var(--g100);color:var(--g700);}
+.btn-ghost:hover{background:var(--g200);}
+.btn-sm{padding:5px 10px;font-size:11px;}
+.btn-lg{padding:11px 20px;font-size:14px;}
+
+/* ═══ TABLE ═══ */
+.tw{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+thead tr{border-bottom:2px solid var(--g100);}
+thead th{padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--g500);letter-spacing:.4px;text-transform:uppercase;white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--g50);transition:background .1s;}
+tbody tr:hover{background:var(--g50);}
+tbody td{padding:10px 12px;color:var(--g700);vertical-align:middle;}
+.tag{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700;}
+.tag-pending{background:var(--warnbg);color:#92400e;}
+.tag-approved{background:var(--okbg);color:var(--ok);}
+.tag-rejected{background:var(--errbg);color:var(--err);}
+.tag-completed{background:var(--g100);color:var(--g500);}
+.tag-blue{background:var(--pbg);color:var(--p);}
+.tag-green{background:var(--okbg);color:var(--ok);}
+
+/* ═══ REQUEST CARD ═══ */
+.rc{background:var(--w);border:1px solid var(--g100);border-radius:var(--rl);padding:13px 15px;transition:all .15s;margin-bottom:8px;}
+.rc:hover{border-color:var(--g200);box-shadow:var(--sh2);}
+.rc.exp{border-color:var(--pl);}
+.rc-hdr{display:flex;justify-content:space-between;align-items:flex-start;}
+.rc-no{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--g400);font-weight:600;}
+.rc-acts{display:flex;gap:4px;flex-shrink:0;}
+.rc-det{margin-top:11px;padding-top:11px;border-top:1px solid var(--g100);display:none;}
+.rc-det.show{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;}
+.rdi label{font-size:10px;color:var(--g400);font-weight:700;}
+.rdi p{font-size:12px;color:var(--g800);font-weight:500;margin-top:1px;}
+
+/* ═══ SEARCH ═══ */
+.sbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.siw{position:relative;flex:1;min-width:160px;}
+.si-ic{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--g400);pointer-events:none;}
+.si{padding:7px 10px 7px 30px;border:1.5px solid var(--g200);border-radius:var(--r);font-size:12px;
+  font-family:'Noto Sans TC',sans-serif;outline:none;transition:all .15s;width:100%;background:var(--w);}
+.si:focus{border-color:var(--p);}
+.fsel{padding:7px 10px;border:1.5px solid var(--g200);border-radius:var(--r);font-size:12px;
+  font-family:'Noto Sans TC',sans-serif;outline:none;min-width:110px;background:var(--w);}
+
+/* ═══ SETTINGS ═══ */
+.stg-g{display:grid;grid-template-columns:200px 1fr;gap:18px;}
+.stg-nav{display:flex;flex-direction:column;gap:1px;}
+.stg-ni{padding:8px 12px;border-radius:var(--r);cursor:pointer;font-size:12px;font-weight:500;color:var(--g600);transition:all .15s;display:flex;align-items:center;gap:7px;}
+.stg-ni:hover{background:var(--g100);color:var(--g900);}
+.stg-ni.active{background:var(--pbg);color:var(--p);font-weight:700;}
+.dr{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--g100);}
+.dr:last-child{border-bottom:none;}
+.dr-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.dr-body{flex:1;min-width:0;}
+.dr-name{font-size:13px;font-weight:600;color:var(--g900);}
+.dr-sub{font-size:11px;color:var(--g500);margin-top:1px;}
+.dr-acts{display:flex;gap:4px;flex-shrink:0;}
+.ie{background:var(--g50);border:1.5px solid var(--pl);border-radius:var(--rl);padding:13px;margin:7px 0;}
+.ie-ttl{font-size:11px;font-weight:700;color:var(--p);margin-bottom:9px;}
+.chip-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+.chip{display:inline-flex;align-items:center;gap:4px;background:var(--pbg);border:1px solid #bfdbfe;border-radius:20px;padding:3px 10px;font-size:12px;color:var(--p);font-weight:500;}
+.chip-x{background:none;border:none;cursor:pointer;color:#93c5fd;font-size:12px;line-height:1;padding:0;}
+.chip-x:hover{color:var(--err);}
+.chip-add{display:flex;gap:6px;}
+
+/* ═══ MODAL ═══ */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);z-index:500;display:flex;align-items:center;justify-content:center;padding:18px;}
+.modal{background:var(--w);border-radius:var(--rxl);max-width:500px;width:100%;box-shadow:var(--sh4);animation:mIn .2s ease;max-height:90vh;overflow-y:auto;}
+@keyframes mIn{from{opacity:0;transform:scale(.94);}to{opacity:1;transform:none;}}
+.modal-hdr{padding:16px 20px 13px;border-bottom:1px solid var(--g100);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--w);}
+.modal-ttl{font-size:15px;font-weight:700;}
+.modal-x{background:var(--g100);border:none;cursor:pointer;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--g500);}
+.modal-body{padding:16px 20px;}
+.modal-foot{padding:13px 20px;border-top:1px solid var(--g100);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:var(--w);}
+
+/* ═══ LOADING ═══ */
+.loader{position:fixed;inset:0;background:rgba(255,255,255,.85);backdrop-filter:blur(4px);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;}
+.spinner{width:36px;height:36px;border:3px solid var(--g200);border-top-color:var(--p);border-radius:50%;animation:sp .7s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg);}}
+
+/* ═══ TOAST ═══ */
+#toasts{position:fixed;bottom:20px;right:20px;z-index:1000;display:flex;flex-direction:column;gap:6px;}
+.toast{background:var(--g900);color:var(--w);border-radius:var(--r);padding:10px 15px;font-size:12px;font-weight:500;min-width:220px;display:flex;align-items:center;gap:8px;box-shadow:var(--sh4);animation:tIn .3s ease;}
+@keyframes tIn{from{opacity:0;transform:translateX(40px);}to{opacity:1;transform:none;}}
+.toast.ok{background:var(--ok);}.toast.err{background:var(--err);}.toast.info{background:var(--p);}
+.empty{text-align:center;padding:44px 18px;color:var(--g400);}
+.empty-ico{font-size:40px;margin-bottom:10px;opacity:.5;}
+
+@media(max-width:768px){.content{padding:14px;}.g2,.g4{grid-template-columns:1fr;}.stg-g{grid-template-columns:1fr;}.fg2{grid-template-columns:1fr;}.rc-det.show{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-page">
+  <div class="login-card">
+    <div class="lc-logo">
+      <div class="lc-icon" id="lc-icon">🚛</div>
+      <div class="lc-title" id="lc-title">三盛公司派車登記系統</div>
+      <div class="lc-sub">SANSHEN VEHICLE DISPATCH</div>
+    </div>
+    <div class="role-tabs">
+      <div class="rt on" id="rt-admin" onclick="setRole(&#39;admin&#39;)"><span class="rt-ico">🛡️</span>管理員</div>
+      <div class="rt" id="rt-user" onclick="setRole(&#39;user&#39;)"><span class="rt-ico">👤</span>申請人員</div>
+    </div>
+    <div class="lerr" id="lerr"></div>
+    <div class="fg"><label>帳號</label><div class="iw"><span class="ii">👤</span><input class="fi" id="lu" type="text" placeholder="請輸入帳號" autocomplete="username"></div></div>
+    <div class="fg"><label>密碼</label><div class="iw"><span class="ii">🔒</span><input class="fi" id="lp" type="password" placeholder="請輸入密碼" autocomplete="current-password"></div></div>
+    <button class="lbtn" id="lbtn" onclick="doLogin()">登入系統</button>
+    <div class="lhint">管理員: <code>admin / admin123</code> &nbsp; 申請人員: <code>user1 / user123</code></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <nav class="topbar">
+    <div class="tb-l">
+      <span style="font-size:18px">🚛</span>
+      <span class="tb-logo" id="tb-title">三盛公司派車登記系統</span>
+      <span class="tb-badge" id="tb-role">管理員</span>
+    </div>
+    <div class="tb-r">
+      <div class="tb-user"><div class="tb-av" id="tb-av"></div><span id="tb-name"></span></div>
+      <button class="tb-btn" onclick="doLogout()">登出</button>
+    </div>
+  </nav>
+  <div class="subnav" id="subnav"></div>
+  <div class="content">
+    <div id="pg-dashboard" class="page">
+      <div class="g4" id="stats-row"></div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-hdr"><span class="card-title">📋 今日派車申請</span><button class="btn btn-ghost btn-sm" onclick="goPage(&#39;records&#39;)">查看全部</button></div>
+          <div class="tw"><table><thead><tr><th>時間</th><th>申請人</th><th>路線</th><th>狀態</th></tr></thead><tbody id="today-table"></tbody></table></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><span class="card-title">📊 本月統計</span></div>
+          <div class="card-body" id="month-stats"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="pg-apply" class="page">
+      <div class="g2">
+        <div class="card">
+          <div class="card-hdr"><span class="card-title">📝 派車申請表</span></div>
+          <div class="card-body">
+            <div class="ff" style="margin-bottom:14px"><label>派車種類（可複選）</label><div class="cb-row" id="cb-types"></div></div>
+            <div class="ff"><label>車種選擇</label><select class="ffs" id="f-vtype"><option value="">請選擇車種</option></select></div>
+            <div class="fg2">
+              <div class="ff"><label>派車日期</label><input type="date" class="ffi" id="f-date"></div>
+              <div class="ff"><label>派車時間</label><input type="time" class="ffi" id="f-time"></div>
+            </div>
+            <div class="fg2">
+              <div class="ff"><label>出發地點</label><input type="text" class="ffi" id="f-start" placeholder="出發地"></div>
+              <div class="ff"><label>目的地</label><input type="text" class="ffi" id="f-dest" placeholder="目的地"></div>
+            </div>
+            <div class="ff"><label>搭乘人數</label><input type="number" class="ffi" id="f-pax" min="1" placeholder="人數"></div>
+            <div class="ff"><label>派車申請原因</label><textarea class="ffta" id="f-reason" placeholder="請詳細說明派車原因..."></textarea></div>
+            <div class="fg2">
+              <div class="ff"><label>申請人</label><input type="text" class="ffi" id="f-req" placeholder="姓名"></div>
+              <div class="ff"><label>聯絡電話</label><input type="tel" class="ffi" id="f-phone" placeholder="電話"></div>
+            </div>
+            <div class="ff"><label>備註</label><textarea class="ffta" id="f-notes" placeholder="選填..."></textarea></div>
+            <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px">
+              <button class="btn btn-ghost" onclick="resetForm()">清除</button>
+              <button class="btn btn-p btn-lg" id="submit-btn" onclick="submitApply()">✅ 提交申請</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><span class="card-title">🕐 最新申請紀錄</span><button class="btn btn-ghost btn-sm" onclick="loadRecent()">重新整理</button></div>
+          <div style="max-height:660px;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:7px" id="recent-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="pg-records" class="page">
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">📚 歷史派車紀錄</span>
+          <div style="display:flex;gap:7px">
+            <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇ 匯出 CSV</button>
+            <button class="btn btn-p btn-sm" onclick="loadRecords()">🔄 重新整理</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="sbar">
+            <div class="siw" style="max-width:260px"><span class="si-ic">🔍</span><input class="si" id="s-q" placeholder="搜尋申請人、地點..." oninput="loadRecords()"></div>
+            <select class="fsel" id="s-status" onchange="loadRecords()">
+              <option value="">全部狀態</option>
+              <option value="pending">待審核</option>
+              <option value="approved">已核准</option>
+              <option value="rejected">已拒絕</option>
+              <option value="completed">已完成</option>
+            </select>
+            <input type="date" class="fsel" id="s-from" onchange="loadRecords()" title="開始日期">
+            <input type="date" class="fsel" id="s-to" onchange="loadRecords()" title="結束日期">
+            <button class="btn btn-ghost btn-sm" onclick="clearFilters()">清除篩選</button>
+          </div>
+          <div style="font-size:12px;color:var(--g500);margin-bottom:10px" id="rec-info"></div>
+          <div id="records-list"></div>
+          <div id="pagination" style="display:flex;justify-content:center;gap:5px;margin-top:14px;flex-wrap:wrap"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="pg-mine" class="page">
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">📋 我的派車申請</span>
+          <button class="btn btn-p btn-sm" onclick="goPage(&#39;apply&#39;)">＋ 新增申請</button>
+        </div>
+        <div style="padding:12px" id="mine-list"></div>
+      </div>
+    </div>
+
+    <div id="pg-vehicles" class="page">
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">🚛 車輛管理</span>
+          <button class="btn btn-p btn-sm" id="add-veh-btn" onclick="showVehForm()">＋ 新增車輛</button>
+        </div>
+        <div class="card-body">
+          <div id="veh-form-area"></div>
+          <div id="veh-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="pg-settings" class="page">
+      <div class="stg-g">
+        <div class="card" style="padding:10px">
+          <div class="stg-nav">
+            <div class="stg-ni active" data-stab="accounts" onclick="stgTab(&#39;accounts&#39;)">👥 帳號管理</div>
+            <div class="stg-ni" data-stab="siteinfo" onclick="stgTab(&#39;siteinfo&#39;)">🏭 網站資訊</div>
+            <div class="stg-ni" data-stab="dtypes" onclick="stgTab(&#39;dtypes&#39;)">🏷️ 派車種類</div>
+            <div class="stg-ni" data-stab="vtypes" onclick="stgTab(&#39;vtypes&#39;)">🚗 車種清單</div>
+            <div class="stg-ni" data-stab="email" onclick="stgTab(&#39;email&#39;)">📧 郵件設定</div>
+          </div>
+        </div>
+        <div id="stg-content"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="modal-root"></div>
+<!-- Loader -->
+<div id="loader" class="loader" style="display:none"><div class="spinner"></div><div style="font-size:13px;color:var(--g500)" id="loader-txt">載入中...</div></div>
+<!-- Toasts -->
+<div id="toasts"></div>
+
+<script>
+// ═══════════════════════════════════════════
+// SUPABASE CONFIG — 填入你的資料
+// ═══════════════════════════════════════════
+const SUPA_URL  = 'https://mpwfmqnkpekkebnapsfi.supabase.co';
+const SUPA_KEY  = 'sb_publishable_Fo4jB2h-qI0q46Di5SqrUQ_dtR6Xk1i';
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+// Email 設定（用 EmailJS — 免費，每月200封）
+// 設定後在「系統設定 → 郵件設定」填入
+let EMAIL_CFG = { service_id:'', template_id:'', public_key:'', admin_email:'' };
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+let CU = null, loginRole = 'admin', curPage = '', curStgTab = 'accounts';
+let recPage = 1; const PER = 20;
+let CONFIG = { dispatch_types:[], vehicle_types:[], site_name:'三盛公司派車登記系統' };
+
+// ═══════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════
+const $ = id => document.getElementById(id);
+function showLoader(txt='載入中...') { $('loader').style.display='flex'; $('loader-txt').textContent=txt; }
+function hideLoader() { $('loader').style.display='none'; }
+function toast(msg, type='') {
+  const d=document.createElement('div'); d.className=`toast ${type}`; d.innerHTML=`<span>${msg}</span>`;
+  $('toasts').appendChild(d);
+  setTimeout(()=>{ d.style.cssText='opacity:0;transform:translateX(40px);transition:all .3s'; setTimeout(()=>d.remove(),300); }, 3000);
+}
+function todayStr() { return new Date().toISOString().slice(0,10); }
+function stTag(s) {
+  const m={pending:'tag-pending',approved:'tag-approved',rejected:'tag-rejected',completed:'tag-completed'};
+  const l={pending:'待審核',approved:'已核准',rejected:'已拒絕',completed:'已完成'};
+  return `<span class="tag ${m[s]||''}">${l[s]||s}</span>`;
+}
+function genRef() {
+  const n=new Date(), d=n.toISOString().slice(0,10).replace(/-/g,'');
+  return `D${d}-${Math.floor(Math.random()*900)+100}`;
+}
+function showConfirm(msg, onOk) {
+  const ov=document.createElement('div'); ov.className='mo';
+  ov.innerHTML=`<div class="modal"><div class="modal-hdr"><div class="modal-ttl">⚠️ 確認操作</div><button class="modal-x" onclick="this.closest('.mo').remove()">✕</button></div><div class="modal-body"><p style="color:var(--g600)">${msg}</p></div><div class="modal-foot"><button class="btn btn-ghost" onclick="this.closest('.mo').remove()">取消</button><button class="btn btn-err" id="mok">確認</button></div></div>`;
+  $('modal-root').appendChild(ov);
+  ov.querySelector('#mok').onclick=()=>{ov.remove();onOk();};
+  ov.onclick=e=>{if(e.target===ov)ov.remove();};
+}
+
+// ═══════════════════════════════════════════
+// EMAIL (EmailJS)
+// ═══════════════════════════════════════════
+async function loadEmailCfg() {
+  const { data } = await sb.from('system_config').select('value').eq('key','email_cfg').single();
+  if (data) { try { EMAIL_CFG = JSON.parse(data.value); } catch {} }
+}
+
+async function sendEmail(to, subject, body) {
+  if (!EMAIL_CFG.service_id || !EMAIL_CFG.public_key) return false;
+  try {
+    if (!window.emailjs) {
+      await new Promise(r => {
+        const s=document.createElement('script'); s.src='https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+        s.onload=r; document.head.appendChild(s);
+      });
+      emailjs.init({ publicKey: EMAIL_CFG.public_key });
+    }
+    await emailjs.send(EMAIL_CFG.service_id, EMAIL_CFG.template_id, {
+      to_email: to, subject, message: body, from_name: CONFIG.site_name
+    });
+    return true;
+  } catch(e) { console.warn('Email error:', e); return false; }
+}
+
+// ═══════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════
+function setRole(r) {
+  loginRole = r;
+  $('rt-admin').classList.toggle('on', r==='admin');
+  $('rt-user').classList.toggle('on', r==='user');
+}
+
+document.getElementById('lp').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+document.getElementById('lu').addEventListener('keydown', e => { if(e.key==='Enter') $('lp').focus(); });
+
+async function doLogin() {
+  const u=$('lu').value.trim(), p=$('lp').value;
+  const err=$('lerr'), btn=$('lbtn');
+  err.classList.remove('show'); btn.disabled=true; btn.textContent='登入中...';
+  try {
+    const { data, error } = await sb.from('users').select('*').eq('username',u).eq('password',p).eq('active',true).single();
+    if (error || !data) { err.textContent='帳號或密碼錯誤'; err.classList.add('show'); btn.disabled=false; btn.textContent='登入系統'; return; }
+    if (data.role !== loginRole && loginRole !== 'any') {
+      err.textContent=`此帳號角色為「${data.role==='admin'?'管理員':'申請人員'}」，請選擇正確角色`;
+      err.classList.add('show'); btn.disabled=false; btn.textContent='登入系統'; return;
+    }
+    CU = data;
+    sessionStorage.setItem('cu', JSON.stringify(CU));
+    await initApp();
+  } catch(e) { err.textContent='連線失敗: '+e.message; err.classList.add('show'); }
+  btn.disabled=false; btn.textContent='登入系統';
+}
+
+function doLogout() {
+  CU=null; sessionStorage.removeItem('cu');
+  $('app').classList.remove('show'); $('login-page').style.display='';
+  $('lu').value=''; $('lp').value=''; setRole('admin');
+}
+
+// ═══════════════════════════════════════════
+// APP INIT
+// ═══════════════════════════════════════════
+async function initApp() {
+  showLoader('初始化系統...');
+  await loadConfig();
+  await loadEmailCfg();
+  $('login-page').style.display='none';
+  $('app').classList.add('show');
+  $('tb-title').textContent = CONFIG.site_name;
+  document.title = CONFIG.site_name;
+  $('tb-name').textContent = CU.name;
+  $('tb-role').textContent = CU.role==='admin'?'管理員':'申請人員';
+  const av=$('tb-av'); av.textContent=CU.name[0]; av.style.background=CU.color||'#3b82f6';
+  $('lc-title').textContent = CONFIG.site_name;
+  buildSubnav(); buildForm();
+  goPage(CU.role==='admin'?'dashboard':'apply');
+  hideLoader();
+}
+
+async function loadConfig() {
+  const { data } = await sb.from('system_config').select('*');
+  if (!data) return;
+  data.forEach(r => {
+    try {
+      const v = JSON.parse(r.value);
+      if (r.key==='dispatch_types') CONFIG.dispatch_types=v;
+      else if (r.key==='vehicle_types') CONFIG.vehicle_types=v;
+      else if (r.key==='site_name') CONFIG.site_name=v;
+    } catch { if(r.key==='site_name') CONFIG.site_name=r.value; }
+  });
+}
+
+function buildSubnav() {
+  const nav = $('subnav');
+  if (CU.role==='admin') {
+    nav.innerHTML=`
+      <div class="sn" data-pg="dashboard" onclick="goPage('dashboard')">📊 總覽</div>
+      <div class="sn" data-pg="apply" onclick="goPage('apply')">📝 新增申請</div>
+      <div class="sn" data-pg="records" onclick="goPage('records')">📚 派車紀錄 <span class="sn-dot" id="pending-dot" style="display:none">0</span></div>
+      <div class="sn" data-pg="vehicles" onclick="goPage('vehicles')">🚛 車輛管理</div>
+      <div class="sn" data-pg="settings" onclick="goPage('settings')">⚙️ 系統設定</div>`;
+  } else {
+    nav.innerHTML=`
+      <div class="sn" data-pg="apply" onclick="goPage('apply')">📝 新增申請</div>
+      <div class="sn" data-pg="mine" onclick="goPage('mine')">📋 我的申請</div>
+      <div class="sn" data-pg="records" onclick="goPage('records')">📚 查詢紀錄</div>`;
+  }
+  updatePendingBadge();
+}
+
+function buildForm() {
+  // Dispatch type checkboxes
+  const cb=$('cb-types');
+  if(cb) cb.innerHTML=CONFIG.dispatch_types.map(t=>`<div class="cbi" onclick="toggleCb(this)" data-val="${t}"><div class="cbck"></div>${t}</div>`).join('');
+  // Vehicle type select
+  const vs=$('f-vtype');
+  if(vs) vs.innerHTML='<option value="">請選擇車種</option>'+CONFIG.vehicle_types.map(t=>`<option>${t}</option>`).join('');
+  // Default date
+  const d=$('f-date'); if(d) d.value=todayStr();
+  // Auto-fill requester
+  const r=$('f-req'); if(r) r.value=CU.name;
+}
+
+function toggleCb(el) { el.classList.toggle('on'); }
+function resetForm() {
+  document.querySelectorAll('.cbi').forEach(e=>e.classList.remove('on'));
+  ['f-vtype','f-time','f-start','f-dest','f-pax','f-reason','f-notes'].forEach(id=>{const e=$(id);if(e)e.value='';});
+  $('f-date').value=todayStr(); $('f-req').value=CU.name;
+}
+
+function goPage(name) {
+  curPage=name;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sn').forEach(n=>n.classList.remove('active'));
+  $('pg-'+name)?.classList.add('active');
+  document.querySelectorAll(`[data-pg="${name}"]`).forEach(n=>n.classList.add('active'));
+  if(name==='dashboard') loadDashboard();
+  if(name==='records') { recPage=1; loadRecords(); }
+  if(name==='apply') { buildForm(); loadRecent(); }
+  if(name==='mine') loadMine();
+  if(name==='vehicles') loadVehicles();
+  if(name==='settings') renderSettings();
+}
+
+async function updatePendingBadge() {
+  if(CU?.role!=='admin') return;
+  const { count } = await sb.from('dispatch_requests').select('*',{count:'exact',head:true}).eq('status','pending');
+  const dot=$('pending-dot');
+  if(dot) { dot.textContent=count||0; dot.style.display=count>0?'inline':'none'; }
+}
+
+// ═══════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════
+async function loadDashboard() {
+  showLoader('載入儀表板...');
+  const today=todayStr(), thisMonth=today.slice(0,7);
+  const [r1,r2,r3,r4] = await Promise.all([
+    sb.from('dispatch_requests').select('*',{count:'exact',head:true}).eq('status','pending'),
+    sb.from('dispatch_requests').select('*',{count:'exact',head:true}).eq('dispatch_date',today),
+    sb.from('dispatch_requests').select('*',{count:'exact',head:true}).gte('dispatch_date',thisMonth+'-01'),
+    sb.from('vehicles').select('*',{count:'exact',head:true}).eq('status','available'),
+  ]);
+  $('stats-row').innerHTML=`
+    <div class="stat"><div class="stat-lbl">待審核申請</div><div class="stat-val c-amber">${r1.count||0}</div><div class="stat-sub">需要處理</div><div class="stat-ico">📋</div></div>
+    <div class="stat"><div class="stat-lbl">今日派車</div><div class="stat-val c-blue">${r2.count||0}</div><div class="stat-sub">筆申請</div><div class="stat-ico">📅</div></div>
+    <div class="stat"><div class="stat-lbl">本月派車</div><div class="stat-val c-green">${r3.count||0}</div><div class="stat-sub">筆申請</div><div class="stat-ico">📊</div></div>
+    <div class="stat"><div class="stat-lbl">可用車輛</div><div class="stat-val c-red">${r4.count||0}</div><div class="stat-sub">輛待命中</div><div class="stat-ico">🚗</div></div>`;
+
+  const { data: todayRecs } = await sb.from('dispatch_requests')
+    .select('*, users!requester_id(name,department)')
+    .eq('dispatch_date', today).order('dispatch_time');
+  const tbody=$('today-table');
+  tbody.innerHTML=!todayRecs?.length
+    ? '<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--g400)">今日尚無派車記錄</td></tr>'
+    : todayRecs.map(r=>`<tr><td style="font-family:monospace;font-size:12px">${r.dispatch_time}</td><td><strong>${r.users?.name||''}</strong></td><td style="font-size:12px">${r.start_location} → ${r.destination}</td><td>${stTag(r.status)}</td></tr>`).join('');
+
+  const { data: monthRecs } = await sb.from('dispatch_requests').select('dispatch_types').gte('dispatch_date',thisMonth+'-01');
+  const tc={};
+  (monthRecs||[]).forEach(r=>{ try{JSON.parse(r.dispatch_types).forEach(t=>tc[t]=(tc[t]||0)+1);}catch{} });
+  const total=monthRecs?.length||0;
+  $('month-stats').innerHTML=`<div style="font-size:11px;color:var(--g500);font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px">派車種類分布</div>`+
+    (Object.keys(tc).length===0?'<p style="color:var(--g400);font-size:13px">本月尚無資料</p>':
+    Object.entries(tc).map(([k,v])=>`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:12px"><span>${k}</span><div style="display:flex;align-items:center;gap:6px"><div style="width:60px;height:5px;background:var(--g100);border-radius:3px;overflow:hidden"><div style="height:100%;width:${total?Math.round(v/total*100):0}%;background:var(--p);border-radius:3px"></div></div><span style="font-family:monospace;font-size:11px;color:var(--g500)">${v}</span></div></div>`).join(''));
+  updatePendingBadge();
+  hideLoader();
+}
+
+// ═══════════════════════════════════════════
+// APPLY
+// ═══════════════════════════════════════════
+async function submitApply() {
+  const types=[...document.querySelectorAll('.cbi.on')].map(e=>e.dataset.val);
+  if(!types.length){toast('請至少選擇一種派車種類','err');return;}
+  const date=$('f-date').value, time=$('f-time').value, start=$('f-start').value.trim(), dest=$('f-dest').value.trim(), reason=$('f-reason').value.trim(), req=$('f-req').value.trim();
+  if(!date||!time||!start||!dest||!reason||!req){toast('請填寫所有必填欄位','err');return;}
+  const btn=$('submit-btn'); btn.disabled=true; btn.textContent='提交中...';
+  const ref=genRef();
+  const status=CU.role==='admin'?'approved':'pending';
+  const { error } = await sb.from('dispatch_requests').insert({
+    request_no:ref, requester_id:CU.id, dispatch_types:JSON.stringify(types),
+    vehicle_type:$('f-vtype').value, dispatch_date:date, dispatch_time:time,
+    start_location:start, destination:dest, passengers:parseInt($('f-pax').value)||1,
+    reason, notes:$('f-notes').value.trim(), status,
+    approved_by:status==='approved'?CU.id:null,
+    approved_at:status==='approved'?new Date().toISOString():null
+  });
+  btn.disabled=false; btn.textContent='✅ 提交申請';
+  if(error){toast('提交失敗: '+error.message,'err');return;}
+  toast(`✅ 申請 ${ref} 已送出！`,'ok');
+  resetForm();
+  loadRecent();
+  updatePendingBadge();
+
+  // 發送郵件通知
+  if(status==='pending' && EMAIL_CFG.admin_email) {
+    sendEmail(EMAIL_CFG.admin_email, `新派車申請 ${ref}`,
+      `申請人：${req}\n種類：${types.join(', ')}\n日期：${date} ${time}\n路線：${start} → ${dest}\n原因：${reason}`);
+  }
+  if(CU.email) {
+    sendEmail(CU.email, `派車申請已送出 ${ref}`, `您的派車申請 ${ref} 已送出，請等待管理員審核。\n\n路線：${start} → ${dest}\n日期：${date} ${time}`);
+  }
+}
+
+async function loadRecent() {
+  const el=$('recent-list'); if(!el)return;
+  const uid=CU.id, isAdmin=CU.role==='admin';
+  let q=sb.from('dispatch_requests').select('*').order('created_at',{ascending:false}).limit(8);
+  if(!isAdmin) q=q.eq('requester_id',uid);
+  const { data } = await q;
+  if(!data?.length){el.innerHTML='<div class="empty"><div class="empty-ico">📝</div><p>尚未提交過申請</p></div>';return;}
+  el.innerHTML=data.map(r=>`<div class="rc">
+    <div class="rc-hdr">
+      <div>
+        <div style="font-size:13px;font-weight:700">${r.dispatch_date} ${r.dispatch_time}</div>
+        <div style="font-size:12px;color:var(--g500);margin-top:2px">${r.start_location} → ${r.destination}</div>
+      </div>
+      ${stTag(r.status)}
+    </div>
+  </div>`).join('');
+}
+
+// ═══════════════════════════════════════════
+// RECORDS
+// ═══════════════════════════════════════════
+async function loadRecords() {
+  showLoader('載入紀錄...');
+  const q2=$('s-q')?.value||'', status=$('s-status')?.value||'', from=$('s-from')?.value||'', to=$('s-to')?.value||'';
+  const isAdmin=CU.role==='admin';
+  let q=sb.from('dispatch_requests').select('*, users!requester_id(name,department,phone)',{count:'exact'});
+  if(!isAdmin) q=q.eq('requester_id',CU.id);
+  if(status) q=q.eq('status',status);
+  if(from) q=q.gte('dispatch_date',from);
+  if(to) q=q.lte('dispatch_date',to);
+  if(q2) q=q.or(`start_location.ilike.%${q2}%,destination.ilike.%${q2}%`);
+  const start=(recPage-1)*PER;
+  q=q.order('created_at',{ascending:false}).range(start,start+PER-1);
+  const { data, count, error } = await q;
+  hideLoader();
+  if(error){toast('載入失敗','err');return;}
+  $('rec-info').textContent=`共找到 ${count||0} 筆記錄`;
+  const list=$('records-list');
+  if(!data?.length){list.innerHTML='<div class="empty"><div class="empty-ico">📭</div><p>找不到符合條件的記錄</p></div>';$('pagination').innerHTML='';return;}
+  list.innerHTML=data.map(r=>recCard(r,isAdmin)).join('');
+  const totalPg=Math.ceil((count||0)/PER);
+  $('pagination').innerHTML=totalPg<=1?'':Array.from({length:totalPg},(_,i)=>i+1).map(p=>`<button class="btn btn-sm ${p===recPage?'btn-p':'btn-ghost'}" onclick="goRec(${p})">${p}</button>`).join('');
+}
+
+function goRec(p){recPage=p;loadRecords();}
+function clearFilters(){['s-q','s-status','s-from','s-to'].forEach(id=>{const e=$(id);if(e)e.value='';});loadRecords();}
+
+function recCard(r, canAdmin) {
+  let types=[];try{types=JSON.parse(r.dispatch_types);}catch{types=[r.dispatch_types];}
+  return `<div class="rc" id="rc-${r.id}">
+    <div class="rc-hdr">
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px">
+          <span style="font-family:monospace;font-size:11px;color:var(--g400)">${r.request_no}</span>${stTag(r.status)}
+        </div>
+        <div style="font-size:14px;font-weight:700">${r.dispatch_date} ${r.dispatch_time}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin:4px 0">${types.map(t=>`<span class="tag tag-blue">${t}</span>`).join('')}</div>
+        <div style="font-size:12px;color:var(--g500)">👤 ${r.users?.name||''} · 📍 ${r.start_location} → ${r.destination} · 👥 ${r.passengers}人</div>
+      </div>
+      <div class="rc-acts">
+        ${canAdmin&&r.status==='pending'?`<button class="btn btn-ok btn-sm" onclick="approveRec(${r.id})">✓ 核准</button><button class="btn btn-err btn-sm" onclick="showRejectModal(${r.id})">✕ 拒絕</button>`:''}
+        ${canAdmin&&r.status==='approved'?`<button class="btn btn-ghost btn-sm" onclick="completeRec(${r.id})">完成</button>`:''}
+        ${canAdmin?`<button class="btn btn-sm" style="background:var(--errbg);color:var(--err)" onclick="deleteRec(${r.id})">🗑</button>`:''}
+        <button class="btn btn-ghost btn-sm" onclick="toggleDet('${r.id}')">詳情</button>
+      </div>
+    </div>
+    <div class="rc-det" id="det-${r.id}">
+      <div class="rdi"><label>申請原因</label><p>${r.reason||'—'}</p></div>
+      <div class="rdi"><label>電話</label><p>${r.users?.phone||'—'}</p></div>
+      <div class="rdi"><label>備註</label><p>${r.notes||'—'}</p></div>
+      ${r.reject_reason?`<div class="rdi"><label>拒絕原因</label><p style="color:var(--err)">${r.reject_reason}</p></div>`:''}
+      <div class="rdi"><label>申請時間</label><p style="font-family:monospace;font-size:11px">${r.created_at?.slice(0,16)||''}</p></div>
+      <div class="rdi"><label>記錄編號</label><p style="font-family:monospace;font-size:10px;color:var(--g400)">${r.request_no}</p></div>
+    </div>
+  </div>`;
+}
+
+function toggleDet(id){const d=$(`det-${id}`),c=$(`rc-${id}`);d?.classList.toggle('show');c?.classList.toggle('exp');}
+
+async function approveRec(id) {
+  const { data:r } = await sb.from('dispatch_requests').select('*, users!requester_id(name,email)').eq('id',id).single();
+  showConfirm(`確定核准申請 ${r?.request_no}？`, async()=>{
+    await sb.from('dispatch_requests').update({status:'approved',approved_by:CU.id,approved_at:new Date().toISOString()}).eq('id',id);
+    toast('✅ 申請已核准','ok'); loadRecords(); updatePendingBadge();
+    if(r?.users?.email) sendEmail(r.users.email,`派車申請 ${r.request_no} 已核准`,`您的派車申請 ${r.request_no} 已核准！\n\n路線：${r.start_location} → ${r.destination}\n日期：${r.dispatch_date} ${r.dispatch_time}\n\n如有問題請聯絡管理員。`);
+  });
+}
+
+function showRejectModal(id) {
+  const ov=document.createElement('div'); ov.className='mo';
+  ov.innerHTML=`<div class="modal"><div class="modal-hdr"><div class="modal-ttl">❌ 拒絕申請</div><button class="modal-x" onclick="this.closest('.mo').remove()">✕</button></div><div class="modal-body"><div class="ff"><label>拒絕原因（必填）</label><textarea class="ffta" id="rej-reason" placeholder="請說明拒絕原因..." style="min-height:90px"></textarea></div></div><div class="modal-foot"><button class="btn btn-ghost" onclick="this.closest('.mo').remove()">取消</button><button class="btn btn-err" onclick="doReject(${id},this)">確認拒絕</button></div></div>`;
+  $('modal-root').appendChild(ov);
+  ov.onclick=e=>{if(e.target===ov)ov.remove();};
+}
+
+async function doReject(id, btn) {
+  const reason=$('rej-reason')?.value.trim();
+  if(!reason){toast('請填寫拒絕原因','err');return;}
+  btn.disabled=true;
+  const { data:r } = await sb.from('dispatch_requests').select('*, users!requester_id(name,email)').eq('id',id).single();
+  await sb.from('dispatch_requests').update({status:'rejected',reject_reason:reason,approved_by:CU.id,approved_at:new Date().toISOString()}).eq('id',id);
+  btn.closest('.mo').remove();
+  toast('申請已拒絕'); loadRecords(); updatePendingBadge();
+  if(r?.users?.email) sendEmail(r.users.email,`派車申請 ${r.request_no} 未通過`,`您的派車申請 ${r.request_no} 未通過審核。\n\n拒絕原因：${reason}\n\n如有疑問請聯絡管理員。`);
+}
+
+async function completeRec(id) {
+  showConfirm('確定標記此申請為已完成？', async()=>{
+    await sb.from('dispatch_requests').update({status:'completed'}).eq('id',id);
+    toast('任務已完成','ok'); loadRecords();
+  });
+}
+
+async function deleteRec(id) {
+  showConfirm('確定要刪除此派車記錄嗎？', async()=>{
+    await sb.from('dispatch_requests').delete().eq('id',id);
+    toast('已刪除'); loadRecords();
+  });
+}
+
+// ═══════════════════════════════════════════
+// MY REQUESTS
+// ═══════════════════════════════════════════
+async function loadMine() {
+  const { data } = await sb.from('dispatch_requests').select('*').eq('requester_id',CU.id).order('created_at',{ascending:false});
+  const el=$('mine-list');
+  if(!data?.length){el.innerHTML='<div class="empty"><div class="empty-ico">📝</div><p>您尚未提交過任何申請</p></div>';return;}
+  el.innerHTML=data.map(r=>recCard(r,false)).join('');
+}
+
+// ═══════════════════════════════════════════
+// VEHICLES
+// ═══════════════════════════════════════════
+async function loadVehicles() {
+  const { data } = await sb.from('vehicles').select('*').order('id');
+  const sc={available:'tag-green',busy:'tag-pending',maintenance:'tag-rejected'};
+  const sl={available:'待命',busy:'出車中',maintenance:'保養中'};
+  $('veh-list').innerHTML=(data||[]).map((v,i)=>`<div class="dr">
+    <div class="dr-ico" style="background:var(--g100);font-size:18px">${v.status==='available'?'🟢':v.status==='busy'?'🔵':'🔴'}</div>
+    <div class="dr-body"><div class="dr-name">${v.plate} <span class="tag ${sc[v.status]}">${sl[v.status]}</span></div>
+    <div class="dr-sub">${v.model} · ${v.type} · 司機: ${v.driver||'—'} · ⛽ ${v.fuel}%</div></div>
+    <div class="dr-acts">
+      <button class="btn btn-sm" style="background:var(--pbg);color:var(--p)" onclick="showVehForm(${v.id})">✏️</button>
+      <button class="btn btn-sm" style="background:var(--errbg);color:var(--err)" onclick="delVeh(${v.id})">🗑</button>
+    </div></div>`).join('');
+}
+
+function showVehForm(id=null) {
+  if(id) {
+    sb.from('vehicles').select('*').eq('id',id).single().then(({data:v})=>{
+      renderVehForm(v);
+    });
+  } else { renderVehForm(null); }
+}
+
+function renderVehForm(v) {
+  $('veh-form-area').innerHTML=`<div class="ie">
+    <div class="ie-ttl">${v?'✏️ 編輯車輛':'➕ 新增車輛'}</div>
+    <div class="fg2" style="gap:10px">
+      <div class="ff"><label>車牌</label><input class="ffi" id="vf-plate" value="${v?.plate||''}" placeholder="ABC-1234"></div>
+      <div class="ff"><label>車型</label><input class="ffi" id="vf-model" value="${v?.model||''}" placeholder="豐田 Hiace"></div>
+      <div class="ff"><label>車種</label><input class="ffi" id="vf-type" value="${v?.type||''}" placeholder="麵包車"></div>
+      <div class="ff"><label>狀態</label><select class="ffi" id="vf-status">
+        <option value="available" ${v?.status==='available'?'selected':''}>待命</option>
+        <option value="busy" ${v?.status==='busy'?'selected':''}>出車中</option>
+        <option value="maintenance" ${v?.status==='maintenance'?'selected':''}>保養中</option>
+      </select></div>
+      <div class="ff"><label>司機</label><input class="ffi" id="vf-driver" value="${v?.driver||''}"></div>
+      <div class="ff"><label>燃油 %</label><input type="number" class="ffi" id="vf-fuel" value="${v?.fuel||100}" min="0" max="100"></div>
+    </div>
+    <div style="display:flex;gap:7px">
+      <button class="btn btn-p" onclick="saveVeh(${v?.id||'null'})">💾 儲存</button>
+      <button class="btn btn-ghost" onclick="$('veh-form-area').innerHTML=''">取消</button>
+    </div></div>`;
+}
+
+async function saveVeh(id) {
+  const plate=$('vf-plate').value.trim(), model=$('vf-model').value.trim();
+  if(!plate||!model){toast('請填寫車牌與車型','err');return;}
+  const obj={plate,model,type:$('vf-type').value,status:$('vf-status').value,driver:$('vf-driver').value.trim(),fuel:parseInt($('vf-fuel').value)||100};
+  if(id!==null&&id!=='null') { await sb.from('vehicles').update(obj).eq('id',id); }
+  else { await sb.from('vehicles').insert(obj); }
+  toast('✅ 車輛已儲存','ok'); $('veh-form-area').innerHTML=''; loadVehicles();
+}
+
+async function delVeh(id) {
+  showConfirm('確定要刪除此車輛？', async()=>{ await sb.from('vehicles').delete().eq('id',id); toast('已刪除'); loadVehicles(); });
+}
+
+// ═══════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════
+function stgTab(tab) {
+  curStgTab=tab;
+  document.querySelectorAll('.stg-ni').forEach(i=>i.classList.toggle('active',i.dataset.stab===tab));
+  renderSettings();
+}
+
+async function renderSettings() {
+  const el=$('stg-content'); if(!el)return;
+  if(curStgTab==='accounts') await renderAccounts();
+  if(curStgTab==='siteinfo') renderSiteInfo();
+  if(curStgTab==='dtypes') await renderChips('dispatch_types','🏷️ 派車種類');
+  if(curStgTab==='vtypes') await renderChips('vehicle_types','🚗 車種清單');
+  if(curStgTab==='email') renderEmailSettings();
+}
+
+async function renderAccounts() {
+  const { data } = await sb.from('users').select('*').order('id');
+  const rl={admin:'🛡️ 管理員',user:'👤 申請人員'};
+  $('stg-content').innerHTML=`<div class="card"><div class="card-hdr"><span class="card-title">👥 帳號管理</span><button class="btn btn-p btn-sm" onclick="showAccForm()">＋ 新增帳號</button></div>
+    <div class="card-body"><div id="acc-form-area"></div>
+    ${(data||[]).map(a=>`<div class="dr">
+      <div class="dr-ico" style="background:${a.color||'#3b82f6'}22;color:${a.color||'#3b82f6'};font-size:16px;font-weight:700">${a.name[0]}</div>
+      <div class="dr-body"><div class="dr-name">${a.name} <span style="font-size:11px;font-weight:400;color:var(--g400)">@${a.username}</span> ${!a.active?'<span class="tag tag-rejected">已停用</span>':''}</div>
+      <div class="dr-sub">${rl[a.role]||a.role} · ${a.department||''} · ${a.email||''}</div></div>
+      <div class="dr-acts">
+        <button class="btn btn-sm" style="background:var(--pbg);color:var(--p)" onclick="showAccForm(${a.id})">✏️</button>
+        <button class="btn btn-sm" style="background:var(--errbg);color:var(--err)" onclick="delAcc(${a.id})">停用</button>
+      </div></div>`).join('')}
+    </div></div>`;
+}
+
+function showAccForm(id=null) {
+  if(id) {
+    sb.from('users').select('*').eq('id',id).single().then(({data:a})=>renderAccForm(a));
+  } else { renderAccForm(null); }
+}
+
+function renderAccForm(a) {
+  const el=$('acc-form-area'); if(!el)return;
+  el.innerHTML=`<div class="ie"><div class="ie-ttl">${a?'✏️ 編輯帳號':'➕ 新增帳號'}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="ff"><label>帳號</label><input class="ffi" id="af-u" value="${a?.username||''}" placeholder="login_id"></div>
+      <div class="ff"><label>密碼${a?' (留空不更改)':''}</label><input type="password" class="ffi" id="af-p" placeholder="${a?'不更改請留空':'設定密碼'}"></div>
+      <div class="ff"><label>姓名</label><input class="ffi" id="af-n" value="${a?.name||''}" placeholder="顯示姓名"></div>
+      <div class="ff"><label>角色</label><select class="ffi" id="af-r">
+        <option value="user" ${a?.role==='user'?'selected':''}>申請人員</option>
+        <option value="admin" ${a?.role==='admin'?'selected':''}>管理員</option>
+      </select></div>
+      <div class="ff"><label>部門</label><input class="ffi" id="af-d" value="${a?.department||''}"></div>
+      <div class="ff"><label>Email（收通知用）</label><input class="ffi" id="af-e" value="${a?.email||''}" placeholder="xxx@company.com"></div>
+      <div class="ff"><label>電話</label><input class="ffi" id="af-ph" value="${a?.phone||''}"></div>
+      <div class="ff"><label>頭像顏色</label><input type="color" id="af-c" value="${a?.color||'#3b82f6'}" style="height:36px;border-radius:7px;border:1.5px solid var(--g200);width:100%;padding:2px"></div>
+    </div>
+    <div style="display:flex;gap:7px">
+      <button class="btn btn-p" onclick="saveAcc(${a?.id||'null'})">💾 儲存</button>
+      <button class="btn btn-ghost" onclick="renderSettings()">取消</button>
+    </div></div>`;
+}
+
+async function saveAcc(id) {
+  const u=$('af-u').value.trim(), n=$('af-n').value.trim(), p=$('af-p').value.trim();
+  if(!u||!n){toast('請填寫帳號與姓名','err');return;}
+  const obj={username:u,name:n,role:$('af-r').value,department:$('af-d').value.trim(),email:$('af-e').value.trim(),phone:$('af-ph').value.trim(),color:$('af-c').value};
+  if(p) obj.password=p;
+  if(id!==null&&id!=='null') { await sb.from('users').update(obj).eq('id',id); }
+  else { if(!p){toast('新帳號請設定密碼','err');return;} await sb.from('users').insert(obj); }
+  toast('✅ 帳號已儲存','ok'); renderAccounts();
+}
+
+async function delAcc(id) {
+  if(id===CU.id){toast('不能停用自己','err');return;}
+  showConfirm('確定要停用此帳號？', async()=>{ await sb.from('users').update({active:false}).eq('id',id); toast('帳號已停用'); renderAccounts(); });
+}
+
+function renderSiteInfo() {
+  $('stg-content').innerHTML=`<div class="card"><div class="card-hdr"><span class="card-title">🏭 網站基本資訊</span></div>
+    <div class="card-body">
+      <div class="ff"><label>系統名稱</label><input class="ffi" id="si-name" value="${CONFIG.site_name}"></div>
+      <button class="btn btn-p" onclick="saveSiteInfo()">💾 儲存並套用</button>
+    </div></div>`;
+}
+
+async function saveSiteInfo() {
+  const name=$('si-name').value.trim(); if(!name)return;
+  await sb.from('system_config').upsert({key:'site_name',value:JSON.stringify(name)});
+  CONFIG.site_name=name; $('tb-title').textContent=name; document.title=name; $('lc-title').textContent=name;
+  toast('✅ 已更新','ok');
+}
+
+async function renderChips(key,title) {
+  await loadConfig();
+  const items=key==='dispatch_types'?CONFIG.dispatch_types:CONFIG.vehicle_types;
+  $('stg-content').innerHTML=`<div class="card"><div class="card-hdr"><span class="card-title">${title}</span></div>
+    <div class="card-body">
+      <p style="font-size:12px;color:var(--g500);margin-bottom:12px">申請表中的選項</p>
+      <div class="chip-wrap">${items.map((t,i)=>`<div class="chip">${t}<button class="chip-x" onclick="delChip('${key}',${i})">✕</button></div>`).join('')}</div>
+      <div class="chip-add"><input class="ffi no-icon" id="chip-input" placeholder="新增選項" onkeydown="if(event.key==='Enter')addChip('${key}')"><button class="btn btn-p" onclick="addChip('${key}')">＋ 新增</button></div>
+    </div></div>`;
+}
+
+async function addChip(key) {
+  const v=$('chip-input')?.value.trim(); if(!v){toast('請輸入選項名稱','err');return;}
+  const arr=key==='dispatch_types'?[...CONFIG.dispatch_types,...[v]]:[...CONFIG.vehicle_types,...[v]];
+  await sb.from('system_config').upsert({key,value:JSON.stringify(arr)});
+  if(key==='dispatch_types') CONFIG.dispatch_types=arr; else CONFIG.vehicle_types=arr;
+  toast('✅ 已新增','ok'); renderChips(key,key==='dispatch_types'?'🏷️ 派車種類':'🚗 車種清單'); buildForm();
+}
+
+async function delChip(key,idx) {
+  const arr=key==='dispatch_types'?[...CONFIG.dispatch_types]:[...CONFIG.vehicle_types];
+  arr.splice(idx,1);
+  await sb.from('system_config').upsert({key,value:JSON.stringify(arr)});
+  if(key==='dispatch_types') CONFIG.dispatch_types=arr; else CONFIG.vehicle_types=arr;
+  toast('已刪除'); renderChips(key,key==='dispatch_types'?'🏷️ 派車種類':'🚗 車種清單'); buildForm();
+}
+
+function renderEmailSettings() {
+  $('stg-content').innerHTML=`<div class="card"><div class="card-hdr"><span class="card-title">📧 郵件通知設定</span></div>
+    <div class="card-body">
+      <div style="background:var(--pbg);border:1px solid #bfdbfe;border-radius:var(--r);padding:12px;margin-bottom:16px;font-size:12px;color:var(--p)">
+        使用 <strong>EmailJS</strong>（免費，每月200封）<br>
+        1. 到 <a href="https://emailjs.com" target="_blank" style="color:var(--p)">emailjs.com</a> 免費註冊<br>
+        2. 建立 Email Service（連接你的 Gmail）<br>
+        3. 建立 Email Template（變數：to_email, subject, message, from_name）<br>
+        4. 把 Service ID、Template ID、Public Key 填入下方
+      </div>
+      <div class="fg2">
+        <div class="ff"><label>Service ID</label><input class="ffi" id="em-sid" value="${EMAIL_CFG.service_id}" placeholder="service_xxxxxxx"></div>
+        <div class="ff"><label>Template ID</label><input class="ffi" id="em-tid" value="${EMAIL_CFG.template_id}" placeholder="template_xxxxxxx"></div>
+        <div class="ff"><label>Public Key</label><input class="ffi" id="em-pk" value="${EMAIL_CFG.public_key}" placeholder="xxxxxxxxxxxxx"></div>
+        <div class="ff"><label>管理員收件 Email</label><input class="ffi" id="em-admin" value="${EMAIL_CFG.admin_email}" placeholder="admin@company.com"></div>
+      </div>
+      <button class="btn btn-p" onclick="saveEmailCfg()">💾 儲存郵件設定</button>
+      <button class="btn btn-ghost" style="margin-left:8px" onclick="testEmail()">📧 測試發送</button>
+    </div></div>`;
+}
+
+async function saveEmailCfg() {
+  EMAIL_CFG={service_id:$('em-sid').value.trim(),template_id:$('em-tid').value.trim(),public_key:$('em-pk').value.trim(),admin_email:$('em-admin').value.trim()};
+  await sb.from('system_config').upsert({key:'email_cfg',value:JSON.stringify(EMAIL_CFG)});
+  toast('✅ 郵件設定已儲存','ok');
+}
+
+async function testEmail() {
+  if(!EMAIL_CFG.admin_email){toast('請填寫管理員 Email','err');return;}
+  const ok=await sendEmail(EMAIL_CFG.admin_email,'測試郵件 - 三盛派車系統','這是一封測試郵件，如果您收到此信，表示郵件設定正確！');
+  toast(ok?'✅ 測試郵件已發送！':'❌ 發送失敗，請確認設定', ok?'ok':'err');
+}
+
+// ═══════════════════════════════════════════
+// EXPORT CSV
+// ═══════════════════════════════════════════
+async function exportCSV() {
+  const { data } = await sb.from('dispatch_requests').select('*, users!requester_id(name,phone)').order('created_at',{ascending:false});
+  if(!data?.length){toast('沒有資料可匯出','err');return;}
+  const rows=[['編號','日期','時間','申請人','電話','種類','出發地','目的地','人數','原因','狀態','申請時間']];
+  data.forEach(r=>{
+    let types=''; try{types=JSON.parse(r.dispatch_types).join('+')}catch{types=r.dispatch_types;}
+    rows.push([r.request_no,r.dispatch_date,r.dispatch_time,r.users?.name||'',r.users?.phone||'',types,r.start_location,r.destination,r.passengers,(r.reason||'').replace(/,/g,'，'),r.status,r.created_at?.slice(0,16)||'']);
+  });
+  const csv='\uFEFF'+rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download=`派車紀錄_${todayStr()}.csv`;a.click();
+  toast('✅ CSV 已匯出','ok');
+}
+
+// ═══════════════════════════════════════════
+// AUTO-RESTORE SESSION
+// ═══════════════════════════════════════════
+window.onload = async () => {
+  const saved = sessionStorage.getItem('cu');
+  if(saved) { try { CU=JSON.parse(saved); await initApp(); } catch { sessionStorage.removeItem('cu'); } }
+};
+</script>
+
+
+</body></html>
