@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- saved from url=(0044)file:///C:/Users/USER/Downloads/index_7.html -->
 <html lang="zh-TW"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -233,13 +234,13 @@ tbody td{padding:10px 12px;color:var(--g700);vertical-align:middle;}
       <div class="lc-sub">SUN HSU VEHICLE DISPATCH</div>
     </div>
     <div class="role-tabs">
-      <div class="rt on" id="rt-admin" onclick="window.setRole(&#39;admin&#39;)"><span class="rt-ico">🛡️</span>管理員</div>
-      <div class="rt" id="rt-user" onclick="window.setRole(&#39;user&#39;)"><span class="rt-ico">👤</span>申請人員</div>
+      <div class="rt" id="rt-admin" onclick="window.setRole(&#39;admin&#39;)"><span class="rt-ico">🛡️</span>管理員</div>
+      <div class="rt on" id="rt-user" onclick="window.setRole(&#39;user&#39;)"><span class="rt-ico">👤</span>申請人員</div>
     </div>
-    <div class="lerr" id="lerr"></div>
+    <div class="lerr show" id="lerr">帳號或密碼錯誤</div>
     <div class="fg"><label>帳號</label><div class="iw"><span class="ii">👤</span><input class="fi" id="lu" type="text" placeholder="請輸入帳號" autocomplete="username"></div></div>
     <div class="fg"><label>密碼</label><div class="iw"><span class="ii">🔒</span><input class="fi" id="lp" type="password" placeholder="請輸入密碼" autocomplete="current-password"></div></div>
-    <button class="lbtn" id="lbtn" onclick="window.doLogin()">登入系統</button>
+    <button class="lbtn" id="lbtn" onclick="doLogin()">登入系統</button>
     <div class="lhint">管理員: <code>admin / admin123</code> &nbsp; 申請人員: <code>user1 / user123</code></div>
   </div>
 </div>
@@ -406,7 +407,6 @@ let CONFIG = { dispatch_types:[], vehicle_types:[], site_name:'三盛公司派�
 // ═══════════════════════════════════════════
 var $ = id => document.getElementById(id);
 window.setRole = r => { loginRole=r; $('rt-admin').classList.toggle('on',r==='admin'); $('rt-user').classList.toggle('on',r==='user'); };
-window.doLogin = () => doLogin();
 function showLoader(txt='載入中...') { $('loader').style.display='flex'; $('loader-txt').textContent=txt; }
 function hideLoader() { $('loader').style.display='none'; }
 function toast(msg, type='') {
@@ -486,6 +486,7 @@ async function doLogin() {
   } catch(e) { err.textContent='連線失敗: '+e.message; err.classList.add('show'); }
   btn.disabled=false; btn.textContent='登入系統';
 }
+window.doLogin = doLogin;
 
 function doLogout() {
   CU=null; sessionStorage.removeItem('cu');
