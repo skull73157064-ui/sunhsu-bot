@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<!-- saved from url=(0044)file:///C:/Users/USER/Downloads/index_9.html -->
+<html lang="zh-TW"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三盛公司派車登記系統</title>
+<link href="./三盛公司派車登記系統_files/css2" rel="stylesheet">
+<style>
+:root{
+  --p:#1d4ed8;--pl:#3b82f6;--pd:#1e3a8a;--pbg:#eff6ff;
+  --ok:#10b981;--okbg:#ecfdf5;
+  --err:#ef4444;--errbg:#fef2f2;
+  --warn:#f59e0b;--warnbg:#fffbeb;
+  --g50:#f9fafb;--g100:#f3f4f6;--g200:#e5e7eb;--g300:#d1d5db;
+  --g400:#9ca3af;--g500:#6b7280;--g600:#4b5563;--g700:#374151;--g800:#1f2937;--g900:#111827;
+  --w:#fff;--r:8px;--rl:12px;--rxl:18px;
+  --sh:0 1px 3px rgba(0,0,0,.1);--sh2:0 4px 6px rgba(0,0,0,.07);--sh4:0 20px 25px rgba(0,0,0,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--g50);color:var(--g800);font-size:14px;line-height:1.5;min-height:100vh;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--g100);}
+::-webkit-scrollbar-thumb{background:var(--g300);border-radius:99px;}
+#login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,#1d4ed8,#1e3a8a 50%,#0f172a);}
+.login-card{background:var(--w);border-radius:var(--rxl);padding:40px 36px;width:100%;max-width:400px;box-shadow:var(--sh4);animation:cardIn .5s cubic-bezier(.34,1.56,.64,1);}
+@keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(.96);}to{opacity:1;transform:none;}}
+.lc-logo{text-align:center;margin-bottom:28px;}
+.lc-icon{width:60px;height:60px;background:linear-gradient(135deg,var(--p),var(--pd));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 14px;box-shadow:0 8px 20px rgba(29,78,216,.3);}
+.lc-title{font-size:18px;font-weight:800;color:var(--g900);line-height:1.3;}
+.lc-sub{font-size:12px;color:var(--g500);margin-top:4px;}
+.role-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;}
+.rt{padding:10px 8px;border-radius:var(--r);border:2px solid var(--g200);background:var(--w);cursor:pointer;text-align:center;transition:all .15s;font-weight:600;font-size:12px;color:var(--g500);}
+.rt:hover{border-color:var(--pl);color:var(--p);}
+.rt.on{border-color:var(--p);background:var(--pbg);color:var(--p);}
+.rt-ico{font-size:20px;display:block;margin-bottom:4px;}
+.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:14px;}
+.fg label{font-size:11px;font-weight:700;color:var(--g700);}
+.iw{position:relative;}
+.ii{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--g400);pointer-events:none;}
+.fi{width:100%;padding:10px 12px 10px 36px;border:1.5px solid var(--g200);border-radius:var(--r);font-size:14px;font-family:'Noto Sans TC',sans-serif;transition:all .15s;outline:none;background:var(--w);}
+.fi:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(29,78,216,.08);}
+.fi.no-icon{padding-left:12px;}
+.lerr{display:none;background:var(--errbg);border:1px solid #fca5a5;border-radius:var(--r);padding:9px 12px;font-size:12px;color:var(--err);margin-bottom:12px;}
+.lerr.show{display:block;}
+.lbtn{width:100%;padding:12px;border-radius:var(--r);border:none;cursor:pointer;font-size:14px;font-weight:700;font-family:'Noto Sans TC',sans-serif;background:linear-gradient(135deg,var(--p),var(--pd));color:var(--w);transition:all .15s;box-shadow:0 4px 12px rgba(29,78,216,.25);margin-top:6px;}
+.lbtn:hover{transform:translateY(-1px);}
+.lbtn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.lhint{text-align:center;font-size:11px;color:var(--g400);margin-top:16px;line-height:1.9;}
+.lhint code{background:var(--g100);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:10px;}
+#app{display:none;min-height:100vh;}
+#app.show{display:block;}
+.topbar{background:linear-gradient(90deg,#1d4ed8,#1e3a8a);color:var(--w);height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+.tb-l{display:flex;align-items:center;gap:10px;}
+.tb-logo{font-size:16px;font-weight:800;}
+.tb-badge{background:rgba(255,255,255,.15);font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;}
+.tb-r{display:flex;align-items:center;gap:8px;}
+.tb-user{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border-radius:var(--r);padding:4px 10px;font-size:12px;font-weight:500;}
+.tb-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#000;}
+.tb-btn{padding:5px 12px;border-radius:var(--r);border:1.5px solid rgba(255,255,255,.3);background:transparent;color:var(--w);font-size:12px;font-weight:600;cursor:pointer;font-family:'Noto Sans TC',sans-serif;}
+.tb-btn:hover{background:rgba(255,255,255,.15);}
+.subnav{background:var(--w);border-bottom:1px solid var(--g200);display:flex;padding:0 22px;position:sticky;top:54px;z-index:90;overflow-x:auto;}
+.subnav::-webkit-scrollbar{display:none;}
+.sn{padding:12px 14px;font-size:13px;font-weight:600;cursor:pointer;border-bottom:2.5px solid transparent;color:var(--g500);white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:5px;}
+.sn:hover{color:var(--p);}
+.sn.active{border-bottom-color:var(--p);color:var(--p);}
+.sn-dot{background:var(--err);color:var(--w);font-size:9px;font-weight:700;padding:1px 5px;border-radius:20px;}
+.content{padding:22px;max-width:1380px;margin:0 auto;}
+.page{display:none;}
+.page.active{display:block;}
+.card{background:var(--w);border-radius:var(--rl);box-shadow:var(--sh);border:1px solid var(--g100);}
+.card-hdr{padding:14px 18px;border-bottom:1px solid var(--g100);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:14px;font-weight:700;color:var(--g900);display:flex;align-items:center;gap:6px;}
+.card-body{padding:18px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
+.stat{background:var(--w);border-radius:var(--rl);padding:16px;border:1px solid var(--g100);box-shadow:var(--sh);position:relative;overflow:hidden;transition:all .15s;}
+.stat:hover{transform:translateY(-2px);box-shadow:var(--sh2);}
+.stat-ico{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:32px;opacity:.07;}
+.stat-lbl{font-size:10px;color:var(--g500);font-weight:700;letter-spacing:.4px;text-transform:uppercase;}
+.stat-val{font-size:26px;font-weight:900;margin:4px 0 2px;font-family:'JetBrains Mono',monospace;}
+.stat-sub{font-size:11px;color:var(--g400);}
+.c-blue{color:var(--p);}.c-green{color:var(--ok);}.c-amber{color:var(--warn);}.c-red{color:var(--err);}
+.ff{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;}
+.ff label{font-size:11px;font-weight:700;color:var(--g700);}
+.ffi,.ffs,.ffta{padding:9px 11px;border:1.5px solid var(--g200);border-radius:var(--r);font-size:13px;font-family:'Noto Sans TC',sans-serif;transition:all .15s;outline:none;background:var(--w);color:var(--g900);width:100%;}
+.ffi:focus,.ffs:focus,.ffta:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(29,78,216,.08);}
+.ffta{resize:vertical;min-height:68px;}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.cb-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
+.cbi{display:flex;align-items:center;gap:5px;background:var(--g50);border:1.5px solid var(--g200);border-radius:7px;padding:5px 11px;cursor:pointer;font-size:12px;font-weight:500;color:var(--g700);transition:all .15s;user-select:none;}
+.cbi:hover{border-color:var(--pl);color:var(--p);}
+.cbi.on{background:var(--pbg);border-color:var(--p);color:var(--p);}
+.cbck{width:13px;height:13px;border:2px solid var(--g300);border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;}
+.cbi.on .cbck{background:var(--p);border-color:var(--p);}
+.cbi.on .cbck::after{content:'✓';font-size:8px;color:white;font-weight:800;}
+.btn{padding:7px 14px;border-radius:var(--r);border:none;cursor:pointer;font-size:12px;font-weight:600;font-family:'Noto Sans TC',sans-serif;transition:all .15s;display:inline-flex;align-items:center;gap:4px;}
+.btn:active{transform:scale(.97);}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.btn-p{background:var(--p);color:var(--w);}
+.btn-p:hover{background:var(--pd);}
+.btn-ok{background:var(--ok);color:var(--w);}
+.btn-err{background:var(--err);color:var(--w);}
+.btn-ghost{background:var(--g100);color:var(--g700);}
+.btn-ghost:hover{background:var(--g200);}
+.btn-sm{padding:5px 10px;font-size:11px;}
+.btn-lg{padding:11px 20px;font-size:14px;}
+.tw{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+thead tr{border-bottom:2px solid var(--g100);}
+thead th{padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--g500);letter-spacing:.4px;text-transform:uppercase;white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--g50);transition:background .1s;}
+tbody tr:hover{background:var(--g50);}
+tbody td{padding:10px 12px;color:var(--g700);vertical-align:middle;}
+.tag{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700;}
+.tag-pending{background:var(--warnbg);color:#92400e;}
+.tag-approved{background:var(--okbg);color:var(--ok);}
+.tag-rejected{background:var(--errbg);color:var(--err);}
+.tag-completed{background:var(--g100);color:var(--g500);}
+.tag-blue{background:var(--pbg);color:var(--p);}
+.tag-green{background:var(--okbg);color:var(--ok);}
+.rc{background:var(--w);border:1px solid var(--g100);border-radius:var(--rl);padding:13px 15px;transition:all .15s;margin-bottom:8px;}
+.rc:hover{border-color:var(--g200);box-shadow:var(--sh2);}
+.rc.exp{border-color:var(--pl);}
+.rc-hdr{display:flex;justify-content:space-between;align-items:flex-start;}
+.rc-acts{display:flex;gap:4px;flex-shrink:0;}
+.rc-det{margin-top:11px;padding-top:11px;border-top:1px solid var(--g100);display:none;}
+.rc-det.show{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;}
+.rdi label{font-size:10px;color:var(--g400);font-weight:700;}
+.rdi p{font-size:12px;color:var(--g800);font-weight:500;margin-top:1px;}
+.sbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.siw{position:relative;flex:1;min-width:160px;}
+.si-ic{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--g400);pointer-events:none;}
+.si{padding:7px 10px 7px 30px;border:1.5px solid var(--g200);border-radius:var(--r);font-size:12px;font-family:'Noto Sans TC',sans-serif;outline:none;transition:all .15s;width:100%;background:var(--w);}
+.si:focus{border-color:var(--p);}
+.fsel{padding:7px 10px;border:1.5px solid var(--g200);border-radius:var(--r);font-size:12px;font-family:'Noto Sans TC',sans-serif;outline:none;min-width:110px;background:var(--w);}
+.stg-g{display:grid;grid-template-columns:200px 1fr;gap:18px;}
+.stg-nav{display:flex;flex-direction:column;gap:1px;}
+.stg-ni{padding:8px 12px;border-radius:var(--r);cursor:pointer;font-size:12px;font-weight:500;color:var(--g600);transition:all .15s;display:flex;align-items:center;gap:7px;}
+.stg-ni:hover{background:var(--g100);color:var(--g900);}
+.stg-ni.active{background:var(--pbg);color:var(--p);font-weight:700;}
+.dr{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--g100);}
+.dr:last-child{border-bottom:none;}
+.dr-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.dr-body{flex:1;min-width:0;}
+.dr-name{font-size:13px;font-weight:600;color:var(--g900);}
+.dr-sub{font-size:11px;color:var(--g500);margin-top:1px;}
+.dr-acts{display:flex;gap:4px;flex-shrink:0;}
+.ie{background:var(--g50);border:1.5px solid var(--pl);border-radius:var(--rl);padding:13px;margin:7px 0;}
+.ie-ttl{font-size:11px;font-weight:700;color:var(--p);margin-bottom:9px;}
+.chip-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+.chip{display:inline-flex;align-items:center;gap:4px;background:var(--pbg);border:1px solid #bfdbfe;border-radius:20px;padding:3px 10px;font-size:12px;color:var(--p);font-weight:500;}
+.chip-x{background:none;border:none;cursor:pointer;color:#93c5fd;font-size:12px;line-height:1;padding:0;}
+.chip-x:hover{color:var(--err);}
+.chip-add{display:flex;gap:6px;}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);z-index:500;display:flex;align-items:center;justify-content:center;padding:18px;}
+.modal{background:var(--w);border-radius:var(--rxl);max-width:500px;width:100%;box-shadow:var(--sh4);animation:mIn .2s ease;max-height:90vh;overflow-y:auto;}
+@keyframes mIn{from{opacity:0;transform:scale(.94);}to{opacity:1;transform:none;}}
+.modal-hdr{padding:16px 20px 13px;border-bottom:1px solid var(--g100);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--w);}
+.modal-ttl{font-size:15px;font-weight:700;}
+.modal-x{background:var(--g100);border:none;cursor:pointer;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--g500);}
+.modal-body{padding:16px 20px;}
+.modal-foot{padding:13px 20px;border-top:1px solid var(--g100);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:var(--w);}
+.loader{position:fixed;inset:0;background:rgba(255,255,255,.85);backdrop-filter:blur(4px);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;}
+.spinner{width:36px;height:36px;border:3px solid var(--g200);border-top-color:var(--p);border-radius:50%;animation:sp .7s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg);}}
+#toasts{position:fixed;bottom:20px;right:20px;z-index:1000;display:flex;flex-direction:column;gap:6px;}
+.toast{background:var(--g900);color:var(--w);border-radius:var(--r);padding:10px 15px;font-size:12px;font-weight:500;min-width:220px;display:flex;align-items:center;gap:8px;box-shadow:var(--sh4);animation:tIn .3s ease;}
+@keyframes tIn{from{opacity:0;transform:translateX(40px);}to{opacity:1;transform:none;}}
+.toast.ok{background:var(--ok);}.toast.err{background:var(--err);}.toast.info{background:var(--p);}
+.empty{text-align:center;padding:44px 18px;color:var(--g400);}
+.empty-ico{font-size:40px;margin-bottom:10px;opacity:.5;}
+@media(max-width:768px){.content{padding:14px;}.g2,.g4{grid-template-columns:1fr;}.stg-g{grid-template-columns:1fr;}.fg2{grid-template-columns:1fr;}.rc-det.show{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+<div id="login-page">
+  <div class="login-card">
+    <div class="lc-logo">
+      <div class="lc-icon">🚛</div>
+      <div class="lc-title" id="lc-title">三盛公司派車登記系統</div>
+      <div class="lc-sub">SUN HSU VEHICLE DISPATCH</div>
+    </div>
+    <div class="role-tabs">
+      <div class="rt on" id="rt-admin">🛡️<br>管理員</div>
+      <div class="rt" id="rt-user">👤<br>申請人員</div>
+    </div>
+    <div class="lerr" id="lerr"></div>
+    <div class="fg"><label>帳號</label><div class="iw"><span class="ii">👤</span><input class="fi" id="lu" type="text" placeholder="請輸入帳號" autocomplete="username"></div></div>
+    <div class="fg"><label>密碼</label><div class="iw"><span class="ii">🔒</span><input class="fi" id="lp" type="password" placeholder="請輸入密碼" autocomplete="current-password"></div></div>
+    <button class="lbtn" id="lbtn">登入系統</button>
+    <div class="lhint">管理員: <code>admin / admin123</code> &nbsp; 申請人員: <code>user1 / user123</code></div>
+  </div>
+</div>
+
+<div id="app">
+  <nav class="topbar">
+    <div class="tb-l"><span style="font-size:18px">🚛</span><span class="tb-logo" id="tb-title">三盛公司派車登記系統</span><span class="tb-badge" id="tb-role">管理員</span></div>
+    <div class="tb-r"><div class="tb-user"><div class="tb-av" id="tb-av"></div><span id="tb-name"></span></div><button class="tb-btn" id="logout-btn">登出</button></div>
+  </nav>
+  <div class="subnav" id="subnav"></div>
+  <div class="content">
+    <div id="pg-dashboard" class="page">
+      <div class="g4" id="stats-row"></div>
+      <div class="g2">
+        <div class="card"><div class="card-hdr"><span class="card-title">📋 今日派車申請</span><button class="btn btn-ghost btn-sm" id="view-all-btn">查看全部</button></div><div class="tw"><table><thead><tr><th>時間</th><th>申請人</th><th>路線</th><th>狀態</th></tr></thead><tbody id="today-table"></tbody></table></div></div>
+        <div class="card"><div class="card-hdr"><span class="card-title">📊 本月統計</span></div><div class="card-body" id="month-stats"></div></div>
+      </div>
+    </div>
+    <div id="pg-apply" class="page">
+      <div class="g2">
+        <div class="card"><div class="card-hdr"><span class="card-title">📝 派車申請表</span></div><div class="card-body">
+          <div class="ff" style="margin-bottom:14px"><label>派車種類（可複選）</label><div class="cb-row" id="cb-types"></div></div>
+          <div class="ff"><label>車種選擇</label><select class="ffs" id="f-vtype"><option value="">請選擇車種</option></select></div>
+          <div class="fg2"><div class="ff"><label>派車日期</label><input type="date" class="ffi" id="f-date"></div><div class="ff"><label>派車時間</label><input type="time" class="ffi" id="f-time"></div></div>
+          <div class="fg2"><div class="ff"><label>出發地點</label><input type="text" class="ffi" id="f-start" placeholder="出發地"></div><div class="ff"><label>目的地</label><input type="text" class="ffi" id="f-dest" placeholder="目的地"></div></div>
+          <div class="ff"><label>搭乘人數</label><input type="number" class="ffi" id="f-pax" min="1" placeholder="人數"></div>
+          <div class="ff"><label>派車申請原因</label><textarea class="ffta" id="f-reason" placeholder="請詳細說明派車原因..."></textarea></div>
+          <div class="fg2"><div class="ff"><label>申請人</label><input type="text" class="ffi" id="f-req" placeholder="姓名"></div><div class="ff"><label>聯絡電話</label><input type="tel" class="ffi" id="f-phone" placeholder="電話"></div></div>
+          <div class="ff"><label>備註</label><textarea class="ffta" id="f-notes" placeholder="選填..."></textarea></div>
+          <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px">
+            <button class="btn btn-ghost" id="reset-btn">清除</button>
+            <button class="btn btn-p btn-lg" id="submit-btn">✅ 提交申請</button>
+          </div>
+        </div></div>
+        <div class="card"><div class="card-hdr"><span class="card-title">🕐 最新申請紀錄</span><button class="btn btn-ghost btn-sm" id="refresh-recent-btn">重新整理</button></div><div style="max-height:660px;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:7px" id="recent-list"></div></div>
+      </div>
+    </div>
+    <div id="pg-records" class="page">
+      <div class="card"><div class="card-hdr"><span class="card-title">📚 歷史派車紀錄</span><div style="display:flex;gap:7px"><button class="btn btn-ghost btn-sm" id="export-btn">⬇ 匯出 CSV</button><button class="btn btn-p btn-sm" id="refresh-rec-btn">🔄 重新整理</button></div></div>
+        <div class="card-body">
+          <div class="sbar">
+            <div class="siw" style="max-width:260px"><span class="si-ic">🔍</span><input class="si" id="s-q" placeholder="搜尋申請人、地點..."></div>
+            <select class="fsel" id="s-status"><option value="">全部狀態</option><option value="pending">待審核</option><option value="approved">已核准</option><option value="rejected">已拒絕</option><option value="completed">已完成</option></select>
+            <input type="date" class="fsel" id="s-from" title="開始日期">
+            <input type="date" class="fsel" id="s-to" title="結束日期">
+            <button class="btn btn-ghost btn-sm" id="clear-filter-btn">清除篩選</button>
+          </div>
+          <div style="font-size:12px;color:var(--g500);margin-bottom:10px" id="rec-info"></div>
+          <div id="records-list"></div>
+          <div id="pagination" style="display:flex;justify-content:center;gap:5px;margin-top:14px;flex-wrap:wrap"></div>
+        </div>
+      </div>
+    </div>
+    <div id="pg-mine" class="page">
+      <div class="card"><div class="card-hdr"><span class="card-title">📋 我的派車申請</span><button class="btn btn-p btn-sm" id="new-apply-btn">＋ 新增申請</button></div><div style="padding:12px" id="mine-list"></div></div>
+    </div>
+    <div id="pg-vehicles" class="page">
+      <div class="card"><div class="card-hdr"><span class="card-title">🚛 車輛管理</span><button class="btn btn-p btn-sm" id="add-veh-btn">＋ 新增車輛</button></div><div class="card-body"><div id="veh-form-area"></div><div id="veh-list"></div></div></div>
+    </div>
+    <div id="pg-settings" class="page">
+      <div class="stg-g">
+        <div class="card" style="padding:10px"><div class="stg-nav" id="stg-nav"></div></div>
+        <div id="stg-content"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modal-root"></div>
+<div id="loader" class="loader" style="display:none"><div class="spinner"></div><div style="font-size:13px;color:var(--g500)" id="loader-txt">載入中...</div></div>
+<div id="toasts"></div>
+
+<script>
+// ═══ 等 Supabase 載入完成後再初始化 ═══
+(function() {
+  var SUPA_URL = 'https://mpwfmqnkpekkebnapsfi.supabase.co';
+  var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1wd2ZtcW5rcGVra2VibmFwc2ZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1MzI3NjIsImV4cCI6MjA5NDEwODc2Mn0.uhw2ac16PR93PY_AyiO0-lclMRr-CE2EjJdV1JLlpbQ';
+  var sb, CU=null, loginRole='admin', curPage='', curStgTab='accounts';
+  var recPage=1, PER=20;
+  var CONFIG={dispatch_types:[],vehicle_types:[],site_name:'三盛公司派車登記系統'};
+  var EMAIL_CFG={service_id:'',template_id:'',public_key:'',admin_email:''};
+
+  function $(id){return document.getElementById(id);}
+  function showLoader(t){$('loader').style.display='flex';$('loader-txt').textContent=t||'載入中...';}
+  function hideLoader(){$('loader').style.display='none';}
+  function todayStr(){return new Date().toISOString().slice(0,10);}
+  function toast(msg,type){var d=document.createElement('div');d.className='toast '+(type||'');d.innerHTML='<span>'+msg+'</span>';$('toasts').appendChild(d);setTimeout(function(){d.style.cssText='opacity:0;transform:translateX(40px);transition:all .3s';setTimeout(function(){d.remove();},300);},3000);}
+  function stTag(s){var m={pending:'tag-pending',approved:'tag-approved',rejected:'tag-rejected',completed:'tag-completed'};var l={pending:'待審核',approved:'已核准',rejected:'已拒絕',completed:'已完成'};return '<span class="tag '+(m[s]||'")>'+(l[s]||s)+'</span>';}
+  function genRef(){var n=new Date(),d=n.toISOString().slice(0,10).replace(/-/g,'');return 'D'+d+'-'+Math.floor(Math.random()*900+100);}
+  function showConfirm(msg,onOk){var ov=document.createElement('div');ov.className='mo';ov.innerHTML='<div class="modal"><div class="modal-hdr"><div class="modal-ttl">⚠️ 確認操作</div><button class="modal-x" id="mc">✕</button></div><div class="modal-body"><p style="color:var(--g600)">'+msg+'</p></div><div class="modal-foot"><button class="btn btn-ghost" id="mn">取消</button><button class="btn btn-err" id="mok">確認</button></div></div>';$('modal-root').appendChild(ov);ov.querySelector('#mc').onclick=function(){ov.remove();};ov.querySelector('#mn').onclick=function(){ov.remove();};ov.querySelector('#mok').onclick=function(){ov.remove();onOk();};ov.onclick=function(e){if(e.target===ov)ov.remove();};}
+
+  // ═══ EMAIL ═══
+  async function sendEmail(to,subject,body){
+    if(!EMAIL_CFG.service_id||!EMAIL_CFG.public_key)return false;
+    try{
+      if(!window.emailjs){
+        await new Promise(function(r){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';s.onload=r;document.head.appendChild(s);});
+        emailjs.init({publicKey:EMAIL_CFG.public_key});
+      }
+      await emailjs.send(EMAIL_CFG.service_id,EMAIL_CFG.template_id,{to_email:to,subject:subject,message:body,from_name:CONFIG.site_name});
+      return true;
+    }catch(e){console.warn('Email:',e);return false;}
+  }
+  async function loadEmailCfg(){try{var r=await sb.from('system_config').select('value').eq('key','email_cfg').single();if(r.data)EMAIL_CFG=JSON.parse(r.data.value);}catch(e){}}
+
+  // ═══ AUTH ═══
+  function setRole(r){
+    loginRole=r;
+    $('rt-admin').classList.toggle('on',r==='admin');
+    $('rt-user').classList.toggle('on',r==='user');
+  }
+
+  async function doLogin(){
+    var u=$('lu').value.trim(),p=$('lp').value;
+    var err=$('lerr'),btn=$('lbtn');
+    err.classList.remove('show');btn.disabled=true;btn.textContent='登入中...';
+    try{
+      var res=await sb.from('users').select('*').eq('username',u).eq('password',p).eq('active',true).single();
+      if(res.error||!res.data){err.textContent='帳號或密碼錯誤';err.classList.add('show');btn.disabled=false;btn.textContent='登入系統';return;}
+      if(res.data.role!==loginRole){err.textContent='此帳號角色不符，請選擇正確角色';err.classList.add('show');btn.disabled=false;btn.textContent='登入系統';return;}
+      CU=res.data;
+      sessionStorage.setItem('cu',JSON.stringify(CU));
+      await initApp();
+    }catch(e){err.textContent='連線失敗: '+e.message;err.classList.add('show');}
+    btn.disabled=false;btn.textContent='登入系統';
+  }
+
+  function doLogout(){CU=null;sessionStorage.removeItem('cu');$('app').classList.remove('show');$('login-page').style.display='';$('lu').value='';$('lp').value='';setRole('admin');}
+
+  // ═══ INIT ═══
+  async function initApp(){
+    showLoader('初始化系統...');
+    await loadConfig();await loadEmailCfg();
+    $('login-page').style.display='none';$('app').classList.add('show');
+    $('tb-title').textContent=CONFIG.site_name;document.title=CONFIG.site_name;
+    $('tb-name').textContent=CU.name;$('tb-role').textContent=CU.role==='admin'?'管理員':'申請人員';
+    var av=$('tb-av');av.textContent=CU.name[0];av.style.background=CU.color||'#3b82f6';
+    $('lc-title').textContent=CONFIG.site_name;
+    buildSubnav();buildForm();
+    goPage(CU.role==='admin'?'dashboard':'apply');
+    hideLoader();
+  }
+
+  async function loadConfig(){
+    var r=await sb.from('system_config').select('*');
+    if(!r.data)return;
+    r.data.forEach(function(row){try{var v=JSON.parse(row.value);if(row.key==='dispatch_types')CONFIG.dispatch_types=v;else if(row.key==='vehicle_types')CONFIG.vehicle_types=v;else if(row.key==='site_name')CONFIG.site_name=v;}catch(e){if(row.key==='site_name')CONFIG.site_name=row.value;}});
+  }
+
+  function buildSubnav(){
+    var nav=$('subnav');
+    if(CU.role==='admin'){
+      nav.innerHTML='<div class="sn" id="sn-dashboard">📊 總覽</div><div class="sn" id="sn-apply">📝 新增申請</div><div class="sn" id="sn-records">📚 派車紀錄 <span class="sn-dot" id="pending-dot" style="display:none">0</span></div><div class="sn" id="sn-vehicles">🚛 車輛管理</div><div class="sn" id="sn-settings">⚙️ 系統設定</div>';
+      $('sn-dashboard').onclick=function(){goPage('dashboard');};
+      $('sn-apply').onclick=function(){goPage('apply');};
+      $('sn-records').onclick=function(){goPage('records');};
+      $('sn-vehicles').onclick=function(){goPage('vehicles');};
+      $('sn-settings').onclick=function(){goPage('settings');};
+    }else{
+      nav.innerHTML='<div class="sn" id="sn-apply">📝 新增申請</div><div class="sn" id="sn-mine">📋 我的申請</div><div class="sn" id="sn-records">📚 查詢紀錄</div>';
+      $('sn-apply').onclick=function(){goPage('apply');};
+      $('sn-mine').onclick=function(){goPage('mine');};
+      $('sn-records').onclick=function(){goPage('records');};
+    }
+    updatePendingBadge();
+  }
+
+  function buildForm(){
+    var cb=$('cb-types');if(cb)cb.innerHTML=CONFIG.dispatch_types.map(function(t){return '<div class="cbi" data-val="'+t+'"><div class="cbck"></div>'+t+'</div>';}).join('');
+    document.querySelectorAll('.cbi').forEach(function(el){el.onclick=function(){el.classList.toggle('on');};});
+    var vs=$('f-vtype');if(vs)vs.innerHTML='<option value="">請選擇車種</option>'+CONFIG.vehicle_types.map(function(t){return '<option>'+t+'</option>';}).join('');
+    var d=$('f-date');if(d)d.value=todayStr();
+    var r=$('f-req');if(r)r.value=CU.name;
+  }
+
+  function resetForm(){
+    document.querySelectorAll('.cbi').forEach(function(e){e.classList.remove('on');});
+    ['f-vtype','f-time','f-start','f-dest','f-pax','f-reason','f-notes'].forEach(function(id){var e=$(id);if(e)e.value='';});
+    $('f-date').value=todayStr();$('f-req').value=CU.name;
+  }
+
+  function goPage(name){
+    curPage=name;
+    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+    document.querySelectorAll('.sn').forEach(function(n){n.classList.remove('active');});
+    var pg=$('pg-'+name);if(pg)pg.classList.add('active');
+    var sn=$('sn-'+name);if(sn)sn.classList.add('active');
+    if(name==='dashboard')loadDashboard();
+    if(name==='records'){recPage=1;loadRecords();}
+    if(name==='apply'){buildForm();loadRecent();}
+    if(name==='mine')loadMine();
+    if(name==='vehicles')loadVehicles();
+    if(name==='settings')renderSettings();
+  }
+
+  async function updatePendingBadge(){
+    if(!CU||CU.role!=='admin')return;
+    try{var r=await sb.from('dispatch_requests').select('*',{count:'exact',head:true}).eq('status','pending');var dot=$('pending-dot');if(dot){dot.textContent=r.count||0;dot.style.display=(r.count>0)?'inline':'none';}}catch(e){}
+  }
+
+  // ═══ DASHBOARD ═══
+  async function loadDashboard(){
+    showLoader('載入儀表板...');
+    var today=todayStr(),thisMonth=today.slice(0,7);
+    try{
+      var r1=await sb.from('dispatch_requests').select('*',{count:'exact',head:true}).eq('status','pending');
+      var r2=await sb.from('dispatch_requests').select('*',{count:'exact',head:true}).eq('dispatch_date',today);
+      var r3=await sb.from('dispatch_requests').select('*',{count:'exact',head:true}).gte('dispatch_date',thisMonth+'-01');
+      var r4=await sb.from('vehicles').select('*',{count:'exact',head:true}).eq('status','available');
+      $('stats-row').innerHTML='<div class="stat"><div class="stat-lbl">待審核申請</div><div class="stat-val c-amber">'+(r1.count||0)+'</div><div class="stat-sub">需要處理</div><div class="stat-ico">📋</div></div><div class="stat"><div class="stat-lbl">今日派車</div><div class="stat-val c-blue">'+(r2.count||0)+'</div><div class="stat-sub">筆申請</div><div class="stat-ico">📅</div></div><div class="stat"><div class="stat-lbl">本月派車</div><div class="stat-val c-green">'+(r3.count||0)+'</div><div class="stat-sub">筆申請</div><div class="stat-ico">📊</div></div><div class="stat"><div class="stat-lbl">可用車輛</div><div class="stat-val c-red">'+(r4.count||0)+'</div><div class="stat-sub">輛待命中</div><div class="stat-ico">🚗</div></div>';
+      var tr=await sb.from('dispatch_requests').select('*,users!requester_id(name,department)').eq('dispatch_date',today).order('dispatch_time');
+      var tbody=$('today-table');
+      tbody.innerHTML=(!tr.data||!tr.data.length)?'<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--g400)">今日尚無派車記錄</td></tr>':tr.data.map(function(r){return '<tr><td style="font-family:monospace;font-size:12px">'+r.dispatch_time+'</td><td><strong>'+(r.users?r.users.name:'')+'</strong></td><td style="font-size:12px">'+r.start_location+' → '+r.destination+'</td><td>'+stTag(r.status)+'</td></tr>';}).join('');
+      var mr=await sb.from('dispatch_requests').select('dispatch_types').gte('dispatch_date',thisMonth+'-01');
+      var tc={};(mr.data||[]).forEach(function(r){try{JSON.parse(r.dispatch_types).forEach(function(t){tc[t]=(tc[t]||0)+1;});}catch(e){}});
+      var total=mr.data?mr.data.length:0;
+      $('month-stats').innerHTML='<div style="font-size:11px;color:var(--g500);font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px">派車種類分布</div>'+(Object.keys(tc).length===0?'<p style="color:var(--g400);font-size:13px">本月尚無資料</p>':Object.entries(tc).map(function(kv){return '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:12px"><span>'+kv[0]+'</span><div style="display:flex;align-items:center;gap:6px"><div style="width:60px;height:5px;background:var(--g100);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+(total?Math.round(kv[1]/total*100):0)+'%;background:var(--p);border-radius:3px"></div></div><span style="font-family:monospace;font-size:11px;color:var(--g500)">'+kv[1]+'</span></div></div>';}).join(''));
+    }catch(e){console.error(e);}
+    updatePendingBadge();hideLoader();
+  }
+
+  // ═══ APPLY ═══
+  async function submitApply(){
+    var types=Array.from(document.querySelectorAll('.cbi.on')).map(function(e){return e.dataset.val;});
+    if(!types.length){toast('請至少選擇一種派車種類','err');return;}
+    var date=$('f-date').value,time=$('f-time').value,start=$('f-start').value.trim(),dest=$('f-dest').value.trim(),reason=$('f-reason').value.trim(),req=$('f-req').value.trim();
+    if(!date||!time||!start||!dest||!reason||!req){toast('請填寫所有必填欄位','err');return;}
+    var btn=$('submit-btn');btn.disabled=true;btn.textContent='提交中...';
+    var ref=genRef(),status=CU.role==='admin'?'approved':'pending';
+    try{
+      var r=await sb.from('dispatch_requests').insert({request_no:ref,requester_id:CU.id,dispatch_types:JSON.stringify(types),vehicle_type:$('f-vtype').value,dispatch_date:date,dispatch_time:time,start_location:start,destination:dest,passengers:parseInt($('f-pax').value)||1,reason:reason,notes:$('f-notes').value.trim(),status:status,approved_by:status==='approved'?CU.id:null,approved_at:status==='approved'?new Date().toISOString():null});
+      if(r.error)throw r.error;
+      toast('✅ 申請 '+ref+' 已送出！','ok');resetForm();loadRecent();updatePendingBadge();
+      if(status==='pending'&&EMAIL_CFG.admin_email)sendEmail(EMAIL_CFG.admin_email,'新派車申請 '+ref,'申請人：'+req+'\n種類：'+types.join(', ')+'\n日期：'+date+' '+time+'\n路線：'+start+' → '+dest+'\n原因：'+reason);
+      if(CU.email)sendEmail(CU.email,'派車申請已送出 '+ref,'您的派車申請 '+ref+' 已送出，請等待管理員審核。\n\n路線：'+start+' → '+dest+'\n日期：'+date+' '+time);
+    }catch(e){toast('提交失敗: '+e.message,'err');}
+    btn.disabled=false;btn.textContent='✅ 提交申請';
+  }
+
+  async function loadRecent(){
+    var el=$('recent-list');if(!el)return;
+    var q=sb.from('dispatch_requests').select('*').order('created_at',{ascending:false}).limit(8);
+    if(CU.role!=='admin')q=q.eq('requester_id',CU.id);
+    var r=await q;
+    if(!r.data||!r.data.length){el.innerHTML='<div class="empty"><div class="empty-ico">📝</div><p>尚未提交過申請</p></div>';return;}
+    el.innerHTML=r.data.map(function(rec){return '<div class="rc"><div class="rc-hdr"><div><div style="font-size:13px;font-weight:700">'+rec.dispatch_date+' '+rec.dispatch_time+'</div><div style="font-size:12px;color:var(--g500);margin-top:2px">'+rec.start_location+' → '+rec.destination+'</div></div>'+stTag(rec.status)+'</div></div>';}).join('');
+  }
+
+  // ═══ RECORDS ═══
+  async function loadRecords(){
+    showLoader('載入紀錄...');
+    var q2=$('s-q')?$('s-q').value:'',status=$('s-status')?$('s-status').value:'',from=$('s-from')?$('s-from').value:'',to=$('s-to')?$('s-to').value:'';
+    var isAdmin=CU.role==='admin';
+    var q=sb.from('dispatch_requests').select('*,users!requester_id(name,department,phone)',{count:'exact'});
+    if(!isAdmin)q=q.eq('requester_id',CU.id);
+    if(status)q=q.eq('status',status);
+    if(from)q=q.gte('dispatch_date',from);
+    if(to)q=q.lte('dispatch_date',to);
+    if(q2)q=q.or('start_location.ilike.%'+q2+'%,destination.ilike.%'+q2+'%');
+    var start=(recPage-1)*PER;
+    q=q.order('created_at',{ascending:false}).range(start,start+PER-1);
+    var res=await q;
+    hideLoader();
+    $('rec-info').textContent='共找到 '+(res.count||0)+' 筆記錄';
+    var list=$('records-list');
+    if(!res.data||!res.data.length){list.innerHTML='<div class="empty"><div class="empty-ico">📭</div><p>找不到符合條件的記錄</p></div>';$('pagination').innerHTML='';return;}
+    list.innerHTML=res.data.map(function(r){return recCard(r,isAdmin);}).join('');
+    var totalPg=Math.ceil((res.count||0)/PER);
+    var pgHtml='';for(var i=1;i<=totalPg;i++){var page=i;pgHtml+='<button class="btn btn-sm '+(i===recPage?'btn-p':'btn-ghost')+'" data-page="'+page+'">'+page+'</button>';}
+    $('pagination').innerHTML=pgHtml;
+    document.querySelectorAll('#pagination button').forEach(function(btn){btn.onclick=function(){recPage=parseInt(btn.dataset.page);loadRecords();};});
+  }
+
+  function clearFilters(){['s-q','s-status','s-from','s-to'].forEach(function(id){var e=$(id);if(e)e.value='';});recPage=1;loadRecords();}
+
+  function recCard(r,canAdmin){
+    var types=[];try{types=JSON.parse(r.dispatch_types);}catch(e){types=[r.dispatch_types];}
+    var actions='';
+    if(canAdmin&&r.status==='pending')actions+='<button class="btn btn-ok btn-sm" data-approve="'+r.id+'">✓ 核准</button><button class="btn btn-err btn-sm" data-reject="'+r.id+'">✕ 拒絕</button>';
+    if(canAdmin&&r.status==='approved')actions+='<button class="btn btn-ghost btn-sm" data-complete="'+r.id+'">完成</button>';
+    if(canAdmin)actions+='<button class="btn btn-sm" style="background:var(--errbg);color:var(--err)" data-delete="'+r.id+'">🗑</button>';
+    actions+='<button class="btn btn-ghost btn-sm" data-detail="'+r.id+'">詳情</button>';
+    return '<div class="rc" id="rc-'+r.id+'"><div class="rc-hdr"><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:7px;margin-bottom:3px"><span style="font-family:monospace;font-size:11px;color:var(--g400)">'+r.request_no+'</span>'+stTag(r.status)+'</div><div style="font-size:14px;font-weight:700">'+r.dispatch_date+' '+r.dispatch_time+'</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin:4px 0">'+types.map(function(t){return '<span class="tag tag-blue">'+t+'</span>';}).join('')+'</div><div style="font-size:12px;color:var(--g500)">👤 '+(r.users?r.users.name:'')+' · 📍 '+r.start_location+' → '+r.destination+' · 👥 '+r.passengers+'人</div></div><div class="rc-acts">'+actions+'</div></div><div class="rc-det" id="det-'+r.id+'"><div class="rdi"><label>申請原因</label><p>'+(r.reason||'—')+'</p></div><div class="rdi"><label>電話</label><p>'+(r.users&&r.users.phone?r.users.phone:'—')+'</p></div><div class="rdi"><label>備註</label><p>'+(r.notes||'—')+'</p></div>'+(r.reject_reason?'<div class="rdi"><label>拒絕原因</label><p style="color:var(--err)">'+r.reject_reason+'</p></div>':'')+'<div class="rdi"><label>申請時間</label><p style="font-family:monospace;font-size:11px">'+(r.created_at?r.created_at.slice(0,16):'')+'</p></div></div></div>';
+  }
+
+  function bindRecordActions(){
+    document.querySelectorAll('[data-approve]').forEach(function(btn){btn.onclick=function(){approveRec(btn.dataset.approve);};});
+    document.querySelectorAll('[data-reject]').forEach(function(btn){btn.onclick=function(){showRejectModal(btn.dataset.reject);};});
+    document.querySelectorAll('[data-complete]').forEach(function(btn){btn.onclick=function(){completeRec(btn.dataset.complete);};});
+    document.querySelectorAll('[data-delete]').forEach(function(btn){btn.onclick=function(){deleteRec(btn.dataset.delete);};});
+    document.querySelectorAll('[data-detail]').forEach(function(btn){btn.onclick=function(){toggleDet(btn.dataset.detail);};});
+  }
+
+  var _origLoadRecords=loadRecords;
+  loadRecords=async function(){await _origLoadRecords();bindRecordActions();};
+
+  function toggleDet(id){var d=$('det-'+id),c=$('rc-'+id);if(d){d.classList.toggle('show');if(c)c.classList.toggle('exp');}}
+
+  async function approveRec(id){
+    var res=await sb.from('dispatch_requests').select('*,users!requester_id(name,email)').eq('id',id).single();
+    showConfirm('確定核准申請 '+(res.data?res.data.request_no:'')+'？',async function(){
+      await sb.from('dispatch_requests').update({status:'approved',approved_by:CU.id,approved_at:new Date().toISOString()}).eq('id',id);
+      toast('✅ 申請已核准','ok');loadRecords();updatePendingBadge();
+      if(res.data&&res.data.users&&res.data.users.email)sendEmail(res.data.users.email,'派車申請 '+res.data.request_no+' 已核准','您的派車申請已核准！\n路線：'+res.data.start_location+' → '+res.data.destination+'\n日期：'+res.data.dispatch_date+' '+res.data.dispatch_time);
+    });
+  }
+
+  function showRejectModal(id){
+    var ov=document.createElement('div');ov.className='mo';
+    ov.innerHTML='<div class="modal"><div class="modal-hdr"><div class="modal-ttl">❌ 拒絕申請</div><button class="modal-x" id="rx">✕</button></div><div class="modal-body"><div class="ff"><label>拒絕原因（必填）</label><textarea class="ffta" id="rej-reason" placeholder="請說明拒絕原因..." style="min-height:90px"></textarea></div></div><div class="modal-foot"><button class="btn btn-ghost" id="rn">取消</button><button class="btn btn-err" id="rok">確認拒絕</button></div></div>';
+    $('modal-root').appendChild(ov);
+    ov.querySelector('#rx').onclick=function(){ov.remove();};
+    ov.querySelector('#rn').onclick=function(){ov.remove();};
+    ov.querySelector('#rok').onclick=async function(){
+      var reason=$('rej-reason').value.trim();if(!reason){toast('請填寫拒絕原因','err');return;}
+      var res=await sb.from('dispatch_requests').select('*,users!requester_id(name,email)').eq('id',id).single();
+      await sb.from('dispatch_requests').update({status:'rejected',reject_reason:reason,approved_by:CU.id,approved_at:new Date().toISOString()}).eq('id',id);
+      ov.remove();toast('申請已拒絕');loadRecords();updatePendingBadge();
+      if(res.data&&res.data.users&&res.data.users.email)sendEmail(res.data.users.email,'派車申請 '+res.data.request_no+' 未通過','拒絕原因：'+reason);
+    };
+    ov.onclick=function(e){if(e.target===ov)ov.remove();};
+  }
+
+  async function completeRec(id){showConfirm('確定標記為已完成？',async function(){await sb.from('dispatch_requests').update({status:'completed'}).eq('id',id);toast('任務已完成','ok');loadRecords();});}
+  async function deleteRec(id){showConfirm('確定要刪除此記錄嗎？',async function(){await sb.from('dispatch_requests').delete().eq('id',id);toast('已刪除');loadRecords();});}
+
+  // ═══ MINE ═══
+  async function loadMine(){
+    var r=await sb.from('dispatch_requests').select('*').eq('requester_id',CU.id).order('created_at',{ascending:false});
+    var el=$('mine-list');
+    if(!r.data||!r.data.length){el.innerHTML='<div class="empty"><div class="empty-ico">📝</div><p>您尚未提交過任何申請</p></div>';return;}
+    el.innerHTML=r.data.map(function(rec){return recCard(rec,false);}).join('');
+    bindRecordActions();
+  }
+
+  // ═══ VEHICLES ═══
+  async function loadVehicles(){
+    var r=await sb.from('vehicles').select('*').order('id');
+    var sc={available:'tag-green',busy:'tag-pending',maintenance:'tag-rejected'};
+    var sl={available:'待命',busy:'出車中',maintenance:'保養中'};
+    $('veh-list').innerHTML=(r.data||[]).map(function(v){return '<div class="dr"><div class="dr-ico" style="background:var(--g100);font-size:18px">'+(v.status==='available'?'🟢':v.status==='busy'?'🔵':'🔴')+'</div><div class="dr-body"><div class="dr-name">'+v.plate+' <span class="tag '+sc[v.status]+'">'+sl[v.status]+'</span></div><div class="dr-sub">'+v.model+' · '+v.type+' · 司機: '+(v.driver||'—')+' · ⛽ '+v.fuel+'%</div></div><div class="dr-acts"><button class="btn btn-sm" style="background:var(--pbg);color:var(--p)" data-edit-veh="'+v.id+'">✏️</button><button class="btn btn-sm" style="background:var(--errbg);color:var(--err)" data-del-veh="'+v.id+'">🗑</button></div></div>';}).join('');
+    document.querySelectorAll('[data-edit-veh]').forEach(function(btn){btn.onclick=function(){showVehForm(btn.dataset.editVeh);};});
+    document.querySelectorAll('[data-del-veh]').forEach(function(btn){btn.onclick=function(){showConfirm('確定要刪除此車輛？',async function(){await sb.from('vehicles').delete().eq('id',btn.dataset.delVeh);toast('已刪除');loadVehicles();});};});
+  }
+
+  function showVehForm(id){
+    if(id){sb.from('vehicles').select('*').eq('id',id).single().then(function(r){renderVehForm(r.data);});}
+    else renderVehForm(null);
+  }
+
+  function renderVehForm(v){
+    $('veh-form-area').innerHTML='<div class="ie"><div class="ie-ttl">'+(v?'✏️ 編輯車輛':'➕ 新增車輛')+'</div><div class="fg2" style="gap:10px"><div class="ff"><label>車牌</label><input class="ffi" id="vf-plate" value="'+(v?v.plate:'')+'" placeholder="ABC-1234"></div><div class="ff"><label>車型</label><input class="ffi" id="vf-model" value="'+(v?v.model:'')+'" placeholder="豐田 Hiace"></div><div class="ff"><label>車種</label><input class="ffi" id="vf-type" value="'+(v?v.type:'')+'"></div><div class="ff"><label>狀態</label><select class="ffi" id="vf-status"><option value="available" '+(v&&v.status==='available'?'selected':'')+'>待命</option><option value="busy" '+(v&&v.status==='busy'?'selected':'')+'>出車中</option><option value="maintenance" '+(v&&v.status==='maintenance'?'selected':'')+'>保養中</option></select></div><div class="ff"><label>司機</label><input class="ffi" id="vf-driver" value="'+(v?v.driver||'':'')+'" ></div><div class="ff"><label>燃油 %</label><input type="number" class="ffi" id="vf-fuel" value="'+(v?v.fuel:100)+'" min="0" max="100"></div></div><div style="display:flex;gap:7px"><button class="btn btn-p" id="save-veh-btn">💾 儲存</button><button class="btn btn-ghost" id="cancel-veh-btn">取消</button></div></div>';
+    $('save-veh-btn').onclick=async function(){
+      var plate=$('vf-plate').value.trim(),model=$('vf-model').value.trim();
+      if(!plate||!model){toast('請填寫車牌與車型','err');return;}
+      var obj={plate:plate,model:model,type:$('vf-type').value,status:$('vf-status').value,driver:$('vf-driver').value.trim(),fuel:parseInt($('vf-fuel').value)||100};
+      if(v){await sb.from('vehicles').update(obj).eq('id',v.id);}else{await sb.from('vehicles').insert(obj);}
+      toast('✅ 車輛已儲存','ok');$('veh-form-area').innerHTML='';loadVehicles();
+    };
+    $('cancel-veh-btn').onclick=function(){$('veh-form-area').innerHTML='';};
+  }
+
+  // ═══ SETTINGS ═══
+  function stgTab(tab){
+    curStgTab=tab;
+    document.querySelectorAll('.stg-ni').forEach(function(i){i.classList.toggle('active',i.dataset.stab===tab);});
+    renderSettings();
+  }
+
+  async function renderSettings(){
+    // Build nav
+    var stgNav=$('stg-nav');
+    stgNav.innerHTML='<div class="stg-ni '+(curStgTab==='accounts'?'active':'')+'" data-stab="accounts">👥 帳號管理</div><div class="stg-ni '+(curStgTab==='siteinfo'?'active':'')+'" data-stab="siteinfo">🏭 網站資訊</div><div class="stg-ni '+(curStgTab==='dtypes'?'active':'')+'" data-stab="dtypes">🏷️ 派車種類</div><div class="stg-ni '+(curStgTab==='vtypes'?'active':'')+'" data-stab="vtypes">🚗 車種清單</div><div class="stg-ni '+(curStgTab==='email'?'active':'')+'" data-stab="email">📧 郵件設定</div>';
+    document.querySelectorAll('.stg-ni').forEach(function(ni){ni.onclick=function(){stgTab(ni.dataset.stab);};});
+    if(curStgTab==='accounts')await renderAccounts();
+    if(curStgTab==='siteinfo')renderSiteInfo();
+    if(curStgTab==='dtypes')await renderChips('dispatch_types','🏷️ 派車種類');
+    if(curStgTab==='vtypes')await renderChips('vehicle_types','🚗 車種清單');
+    if(curStgTab==='email')renderEmailSettings();
+  }
+
+  async function renderAccounts(){
+    var r=await sb.from('users').select('*').order('id');
+    var rl={admin:'🛡️ 管理員',user:'👤 申請人員'};
+    $('stg-content').innerHTML='<div class="card"><div class="card-hdr"><span class="card-title">👥 帳號管理</span><button class="btn btn-p btn-sm" id="add-acc-btn">＋ 新增帳號</button></div><div class="card-body"><div id="acc-form-area"></div>'+(r.data||[]).map(function(a){return '<div class="dr"><div class="dr-ico" style="background:'+(a.color||'#3b82f6')+'22;color:'+(a.color||'#3b82f6')+';font-size:16px;font-weight:700">'+a.name[0]+'</div><div class="dr-body"><div class="dr-name">'+a.name+' <span style="font-size:11px;font-weight:400;color:var(--g400)">@'+a.username+'</span>'+(a.active?'':'<span class="tag tag-rejected">已停用</span>')+'</div><div class="dr-sub">'+(rl[a.role]||a.role)+' · '+(a.department||'')+' · '+(a.email||'')+'</div></div><div class="dr-acts"><button class="btn btn-sm" style="background:var(--pbg);color:var(--p)" data-edit-acc="'+a.id+'">✏️</button><button class="btn btn-sm" style="background:var(--errbg);color:var(--err)" data-del-acc="'+a.id+'">停用</button></div></div>';}).join('')+'</div></div>';
+    $('add-acc-btn').onclick=function(){renderAccForm(null);};
+    document.querySelectorAll('[data-edit-acc]').forEach(function(btn){btn.onclick=function(){sb.from('users').select('*').eq('id',btn.dataset.editAcc).single().then(function(r){renderAccForm(r.data);});};});
+    document.querySelectorAll('[data-del-acc]').forEach(function(btn){btn.onclick=function(){if(parseInt(btn.dataset.delAcc)===CU.id){toast('不能停用自己','err');return;}showConfirm('確定要停用此帳號？',async function(){await sb.from('users').update({active:false}).eq('id',btn.dataset.delAcc);toast('帳號已停用');renderAccounts();});};});
+  }
+
+  function renderAccForm(a){
+    var el=$('acc-form-area');if(!el)return;
+    el.innerHTML='<div class="ie"><div class="ie-ttl">'+(a?'✏️ 編輯帳號':'➕ 新增帳號')+'</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="ff"><label>帳號</label><input class="ffi" id="af-u" value="'+(a?a.username:'')+'" placeholder="login_id"></div><div class="ff"><label>密碼'+(a?' (留空不更改)':'')+'</label><input type="password" class="ffi" id="af-p" placeholder="'+(a?'不更改請留空':'設定密碼')+'"></div><div class="ff"><label>姓名</label><input class="ffi" id="af-n" value="'+(a?a.name:'')+'" placeholder="顯示姓名"></div><div class="ff"><label>角色</label><select class="ffi" id="af-r"><option value="user" '+(a&&a.role==='user'?'selected':'')+'>申請人員</option><option value="admin" '+(a&&a.role==='admin'?'selected':'')+'>管理員</option></select></div><div class="ff"><label>部門</label><input class="ffi" id="af-d" value="'+(a?a.department||'':'')+'"></div><div class="ff"><label>Email</label><input class="ffi" id="af-e" value="'+(a?a.email||'':'')+'" placeholder="xxx@company.com"></div><div class="ff"><label>電話</label><input class="ffi" id="af-ph" value="'+(a?a.phone||'':'')+'"></div><div class="ff"><label>頭像顏色</label><input type="color" id="af-c" value="'+(a?a.color||'#3b82f6':'#3b82f6')+'" style="height:36px;border-radius:7px;border:1.5px solid var(--g200);width:100%;padding:2px"></div></div><div style="display:flex;gap:7px"><button class="btn btn-p" id="save-acc-btn">💾 儲存</button><button class="btn btn-ghost" id="cancel-acc-btn">取消</button></div></div>';
+    $('save-acc-btn').onclick=async function(){
+      var u=$('af-u').value.trim(),n=$('af-n').value.trim(),p=$('af-p').value.trim();
+      if(!u||!n){toast('請填寫帳號與姓名','err');return;}
+      var obj={username:u,name:n,role:$('af-r').value,department:$('af-d').value.trim(),email:$('af-e').value.trim(),phone:$('af-ph').value.trim(),color:$('af-c').value};
+      if(p)obj.password=p;
+      if(a){await sb.from('users').update(obj).eq('id',a.id);}else{if(!p){toast('新帳號請設定密碼','err');return;}await sb.from('users').insert(obj);}
+      toast('✅ 帳號已儲存','ok');renderAccounts();
+    };
+    $('cancel-acc-btn').onclick=function(){$('acc-form-area').innerHTML='';};
+  }
+
+  function renderSiteInfo(){
+    $('stg-content').innerHTML='<div class="card"><div class="card-hdr"><span class="card-title">🏭 網站基本資訊</span></div><div class="card-body"><div class="ff"><label>系統名稱</label><input class="ffi" id="si-name" value="'+CONFIG.site_name+'"></div><button class="btn btn-p" id="save-si-btn">💾 儲存並套用</button></div></div>';
+    $('save-si-btn').onclick=async function(){var name=$('si-name').value.trim();if(!name)return;await sb.from('system_config').upsert({key:'site_name',value:JSON.stringify(name)});CONFIG.site_name=name;$('tb-title').textContent=name;document.title=name;toast('✅ 已更新','ok');};
+  }
+
+  async function renderChips(key,title){
+    await loadConfig();
+    var items=key==='dispatch_types'?CONFIG.dispatch_types:CONFIG.vehicle_types;
+    $('stg-content').innerHTML='<div class="card"><div class="card-hdr"><span class="card-title">'+title+'</span></div><div class="card-body"><p style="font-size:12px;color:var(--g500);margin-bottom:12px">申請表中的選項</p><div class="chip-wrap">'+items.map(function(t,i){return '<div class="chip">'+t+'<button class="chip-x" data-chip-key="'+key+'" data-chip-idx="'+i+'">✕</button></div>';}).join('')+'</div><div class="chip-add"><input class="ffi no-icon" id="chip-input" placeholder="新增選項"><button class="btn btn-p" id="add-chip-btn">＋ 新增</button></div></div></div>';
+    document.querySelectorAll('.chip-x').forEach(function(btn){btn.onclick=async function(){var arr=key==='dispatch_types'?CONFIG.dispatch_types.slice():CONFIG.vehicle_types.slice();arr.splice(parseInt(btn.dataset.chipIdx),1);await sb.from('system_config').upsert({key:key,value:JSON.stringify(arr)});if(key==='dispatch_types')CONFIG.dispatch_types=arr;else CONFIG.vehicle_types=arr;toast('已刪除');renderChips(key,title);buildForm();};});
+    $('add-chip-btn').onclick=async function(){var v=$('chip-input').value.trim();if(!v){toast('請輸入選項名稱','err');return;}var arr=(key==='dispatch_types'?CONFIG.dispatch_types:CONFIG.vehicle_types).concat([v]);await sb.from('system_config').upsert({key:key,value:JSON.stringify(arr)});if(key==='dispatch_types')CONFIG.dispatch_types=arr;else CONFIG.vehicle_types=arr;toast('✅ 已新增','ok');renderChips(key,title);buildForm();};
+  }
+
+  function renderEmailSettings(){
+    $('stg-content').innerHTML='<div class="card"><div class="card-hdr"><span class="card-title">📧 郵件通知設定</span></div><div class="card-body"><div style="background:var(--pbg);border:1px solid #bfdbfe;border-radius:var(--r);padding:12px;margin-bottom:16px;font-size:12px;color:var(--p)">使用 <strong>EmailJS</strong>（免費，每月200封）<br>1. 到 <a href="https://emailjs.com" target="_blank" style="color:var(--p)">emailjs.com</a> 免費註冊<br>2. 建立 Email Service → Template<br>3. 填入下方設定</div><div class="fg2"><div class="ff"><label>Service ID</label><input class="ffi" id="em-sid" value="'+EMAIL_CFG.service_id+'" placeholder="service_xxx"></div><div class="ff"><label>Template ID</label><input class="ffi" id="em-tid" value="'+EMAIL_CFG.template_id+'" placeholder="template_xxx"></div><div class="ff"><label>Public Key</label><input class="ffi" id="em-pk" value="'+EMAIL_CFG.public_key+'" placeholder="xxxxx"></div><div class="ff"><label>管理員收件 Email</label><input class="ffi" id="em-admin" value="'+EMAIL_CFG.admin_email+'" placeholder="admin@company.com"></div></div><button class="btn btn-p" id="save-email-btn">💾 儲存郵件設定</button><button class="btn btn-ghost" style="margin-left:8px" id="test-email-btn">📧 測試發送</button></div></div>';
+    $('save-email-btn').onclick=async function(){EMAIL_CFG={service_id:$('em-sid').value.trim(),template_id:$('em-tid').value.trim(),public_key:$('em-pk').value.trim(),admin_email:$('em-admin').value.trim()};await sb.from('system_config').upsert({key:'email_cfg',value:JSON.stringify(EMAIL_CFG)});toast('✅ 郵件設定已儲存','ok');};
+    $('test-email-btn').onclick=async function(){if(!EMAIL_CFG.admin_email){toast('請填寫管理員 Email','err');return;}var ok=await sendEmail(EMAIL_CFG.admin_email,'測試郵件','這是測試郵件，設定正確！');toast(ok?'✅ 測試郵件已發送！':'❌ 發送失敗','ok');};
+  }
+
+  // ═══ EXPORT CSV ═══
+  async function exportCSV(){
+    var r=await sb.from('dispatch_requests').select('*,users!requester_id(name,phone)').order('created_at',{ascending:false});
+    if(!r.data||!r.data.length){toast('沒有資料可匯出','err');return;}
+    var rows=[['編號','日期','時間','申請人','電話','種類','出發地','目的地','人數','原因','狀態','申請時間']];
+    r.data.forEach(function(rec){var types='';try{types=JSON.parse(rec.dispatch_types).join('+');}catch(e){types=rec.dispatch_types;}rows.push([rec.request_no,rec.dispatch_date,rec.dispatch_time,rec.users?rec.users.name:'',rec.users?rec.users.phone||'':'',types,rec.start_location,rec.destination,rec.passengers,(rec.reason||'').replace(/,/g,'，'),rec.status,rec.created_at?rec.created_at.slice(0,16):'']).join;});
+    var csv='\uFEFF'+rows.map(function(row){return row.map(function(c){return '"'+c+'"';}).join(',');}).join('\n');
+    var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='派車紀錄_'+todayStr()+'.csv';a.click();
+    toast('✅ CSV 已匯出','ok');
+  }
+
+  // ═══ 主入口：等 DOM + Supabase 都準備好 ═══
+  function initSupabase(){
+    if(typeof window.supabase==='undefined'){setTimeout(initSupabase,100);return;}
+    sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
+
+    // 綁定所有事件（在 DOM 已載入、supabase 已載入後）
+    $('rt-admin').onclick=function(){setRole('admin');};
+    $('rt-user').onclick=function(){setRole('user');};
+    $('lbtn').onclick=doLogin;
+    $('lu').addEventListener('keydown',function(e){if(e.key==='Enter')$('lp').focus();});
+    $('lp').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+    $('logout-btn').onclick=doLogout;
+    $('reset-btn')&&($('reset-btn').onclick=resetForm);
+    $('submit-btn')&&($('submit-btn').onclick=submitApply);
+    $('refresh-recent-btn')&&($('refresh-recent-btn').onclick=loadRecent);
+    $('export-btn')&&($('export-btn').onclick=exportCSV);
+    $('refresh-rec-btn')&&($('refresh-rec-btn').onclick=loadRecords);
+    $('clear-filter-btn')&&($('clear-filter-btn').onclick=clearFilters);
+    $('s-q')&&($('s-q').oninput=function(){recPage=1;loadRecords();});
+    $('s-status')&&($('s-status').onchange=function(){recPage=1;loadRecords();});
+    $('s-from')&&($('s-from').onchange=function(){recPage=1;loadRecords();});
+    $('s-to')&&($('s-to').onchange=function(){recPage=1;loadRecords();});
+    $('view-all-btn')&&($('view-all-btn').onclick=function(){goPage('records');});
+    $('new-apply-btn')&&($('new-apply-btn').onclick=function(){goPage('apply');});
+    $('add-veh-btn')&&($('add-veh-btn').onclick=function(){showVehForm(null);});
+
+    // 還原 session
+    var saved=sessionStorage.getItem('cu');
+    if(saved){try{CU=JSON.parse(saved);initApp();}catch(e){sessionStorage.removeItem('cu');}}
+  }
+
+  // DOM 載入完後開始
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',initSupabase);
+  } else {
+    initSupabase();
+  }
+})();
+</script>
+<script src="./三盛公司派車登記系統_files/supabase-js@2"></script>
+
+
+</body></html>
