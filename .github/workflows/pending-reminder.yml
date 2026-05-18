@@ -13,115 +13,78 @@ jobs:
         run: |
           node << 'EOF'
           const https = require('https');
-
-          async function request(url, options = {}, body = null) {
+          async function request(url, options, body) {
             return new Promise((resolve, reject) => {
-              const req = https.request(url, options, (res) => {
+              const req = https.request(url, options || {}, (res) => {
                 let data = '';
                 res.on('data', chunk => data += chunk);
-                res.on('end', () => resolve({ status: res.statusCode, data: JSON.parse(data) }));
+                res.on('end', () => { try { resolve({ status: res.statusCode, data: JSON.parse(data) }); } catch(e) { resolve({ status: res.statusCode, data: {} }); } });
               });
               req.on('error', reject);
               if (body) req.write(JSON.stringify(body));
               req.end();
             });
           }
-
           async function main() {
             const SUPA_URL = process.env.SUPABASE_URL;
             const SUPA_KEY = process.env.SUPABASE_KEY;
             const TG_TOKEN = process.env.TG_BOT_TOKEN;
             const TG_GROUP = process.env.TG_GROUP_ID;
-
-            // 查詢待審核申請
-            const url = new URL(`${SUPA_URL}/rest/v1/dispatch_requests`);
+            const url = new URL(SUPA_URL + '/rest/v1/dispatch_requests');
             url.searchParams.set('select', '*,users!requester_id(name)');
             url.searchParams.set('status', 'eq.pending');
             url.searchParams.set('order', 'created_at.asc');
-
-            const res = await request(url.toString(), {
-              method: 'GET',
-              headers: {
-                'apikey': SUPA_KEY,
-                'Authorization': `Bearer ${SUPA_KEY}`,
-                'Content-Type': 'application/json'
-              }
-            });
-
+            const res = await request(url.toString(), { method: 'GET', headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY, 'Content-Type': 'application/json' } });
             const records = res.data || [];
-            console.log(`Found ${records.length} pending requests`);
-
+            console.log('Found ' + records.length + ' pending requests');
             if (!records.length) return;
-
             const now = Date.now();
-           const today = new Date().toISOString().slice(0, 10);
-
-const overdue = records.filter(rec => {
-  const wait = now - new Date(rec.created_at).getTime();
-  return wait >= 5 * 60 * 1000;
-});
-
-const todayUrgent = records.filter(rec => rec.dispatch_date === today);
-
-console.log(`Overdue: ${overdue.length}, Today urgent: ${todayUrgent.length}`);
-if (!overdue.length && !todayUrgent.length) return;
-
-let msg = '';
-
-// 第一類：申請超過5分鐘未核准
-if (overdue.length) {
-  msg += '🚨🚨 <b>【派車申請待審核提醒】</b> 🚨🚨\n\n';
-  msg += '⚠️ 以下申請超過5分鐘尚未處理，請立即審核！\n\n';
-  overdue.forEach(rec => {
-    let types = [];
-    try { types = JSON.parse(rec.dispatch_types); } catch(e) { types = [rec.dispatch_types]; }
-    const waitMin = Math.floor((now - new Date(rec.created_at).getTime()) / 60000);
-    msg += '━━━━━━━━━━━━━━━\n';
-    msg += `📋 <b>#${rec.request_no}</b>（等待 ${waitMin} 分鐘）\n`;
-    msg += `👤 申請人：${rec.users ? rec.users.name : ''}\n`;
-    msg += `📅 ${rec.dispatch_date} ${rec.dispatch_time}\n`;
-    msg += `📍 ${rec.start_location} → ${rec.destination}\n`;
-    msg += `🏷️ ${types.join(', ')}\n`;
-  });
-  msg += '\n━━━━━━━━━━━━━━━\n';
-  msg += '🔔 請盡快登入系統處理！\n';
-  msg += `🌐 https://sunhsu-bot.vercel.app`;
-}
-
-// 第二類：今日派車但還未核准（緊急）
-if (todayUrgent.length) {
-  if (msg) msg += '\n\n';
-  msg += '🆘🆘 <b>【今日派車緊急提醒】</b> 🆘🆘\n\n';
-  msg += '❗ 以下派車申請日期為今天，但仍未核准！\n\n';
-  todayUrgent.forEach(rec => {
-    let types = [];
-    try { types = JSON.parse(rec.dispatch_types); } catch(e) { types = [rec.dispatch_types]; }
-    msg += '━━━━━━━━━━━━━━━\n';
-    msg += `🚨 <b>#${rec.request_no}</b>\n`;
-    msg += `👤 申請人：${rec.users ? rec.users.name : ''}\n`;
-    msg += `🕐 派車時間：${rec.dispatch_date} ${rec.dispatch_time}\n`;
-    msg += `📍 ${rec.start_location} → ${rec.destination}\n`;
-    msg += `🏷️ ${types.join(', ')}\n`;
-  });
-  msg += '\n━━━━━━━━━━━━━━━\n';
-  msg += '🔴 今日派車未安排，請立即處理！\n';
-  msg += `🌐 https://sunhsu-bot.vercel.app`;
-}
-
-            // 發送 Telegram
-            const tgUrl = `https://api.telegram.org/bot${TG_TOKEN}/sendMessage`;
-            const tgRes = await request(tgUrl, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' }
-            }, {
-              chat_id: TG_GROUP,
-              text: msg,
-              parse_mode: 'HTML'
-            });
-
+            const today = new Date().toISOString().slice(0, 10);
+            const overdue = records.filter(rec => (now - new Date(rec.created_at).getTime()) >= 5 * 60 * 1000);
+            const todayUrgent = records.filter(rec => rec.dispatch_date === today);
+            console.log('Overdue: ' + overdue.length + ', Today: ' + todayUrgent.length);
+            if (!overdue.length && !todayUrgent.length) return;
+            let msg = '';
+            if (overdue.length) {
+              msg += '🚨🚨 <b>【派車申請待審核提醒】</b> 🚨🚨\n\n';
+              msg += '⚠️ 以下申請超過5分鐘尚未處理，請立即審核！\n\n';
+              overdue.forEach(rec => {
+                let types = [];
+                try { types = JSON.parse(rec.dispatch_types); } catch(e) { types = [rec.dispatch_types]; }
+                const waitMin = Math.floor((now - new Date(rec.created_at).getTime()) / 60000);
+                msg += '━━━━━━━━━━━━━━━\n';
+                msg += '📋 <b>#' + rec.request_no + '</b>（等待 ' + waitMin + ' 分鐘）\n';
+                msg += '👤 申請人：' + (rec.users ? rec.users.name : '') + '\n';
+                msg += '📅 ' + rec.dispatch_date + ' ' + rec.dispatch_time + '\n';
+                msg += '📍 ' + rec.start_location + ' → ' + rec.destination + '\n';
+                msg += '🏷️ ' + types.join(', ') + '\n';
+              });
+              msg += '\n━━━━━━━━━━━━━━━\n';
+              msg += '🔔 請盡快登入系統處理！\n';
+              msg += '🌐 https://sunhsu-bot.vercel.app';
+            }
+            if (todayUrgent.length) {
+              if (msg) msg += '\n\n';
+              msg += '🆘🆘 <b>【今日派車緊急提醒】</b> 🆘🆘\n\n';
+              msg += '❗ 以下派車申請日期為今天，但仍未核准！\n\n';
+              todayUrgent.forEach(rec => {
+                let types = [];
+                try { types = JSON.parse(rec.dispatch_types); } catch(e) { types = [rec.dispatch_types]; }
+                msg += '━━━━━━━━━━━━━━━\n';
+                msg += '🚨 <b>#' + rec.request_no + '</b>\n';
+                msg += '👤 申請人：' + (rec.users ? rec.users.name : '') + '\n';
+                msg += '🕐 派車時間：' + rec.dispatch_date + ' ' + rec.dispatch_time + '\n';
+                msg += '📍 ' + rec.start_location + ' → ' + rec.destination + '\n';
+                msg += '🏷️ ' + types.join(', ') + '\n';
+              });
+              msg += '\n━━━━━━━━━━━━━━━\n';
+              msg += '🔴 今日派車未安排，請立即處理！\n';
+              msg += '🌐 https://sunhsu-bot.vercel.app';
+            }
+            const tgUrl = 'https://api.telegram.org/bot' + TG_TOKEN + '/sendMessage';
+            const tgRes = await request(tgUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' } }, { chat_id: TG_GROUP, text: msg, parse_mode: 'HTML' });
             console.log('Telegram sent:', tgRes.status);
           }
-
           main().catch(console.error);
           EOF
         env:
