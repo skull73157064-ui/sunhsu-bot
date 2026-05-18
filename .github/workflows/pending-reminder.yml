@@ -54,32 +54,59 @@ jobs:
             if (!records.length) return;
 
             const now = Date.now();
-            const overdue = records.filter(rec => {
-              const wait = now - new Date(rec.created_at).getTime();
-              return wait >= 5 * 60 * 1000;
-            });
+           const today = new Date().toISOString().slice(0, 10);
 
-            console.log(`Overdue: ${overdue.length}`);
-            if (!overdue.length) return;
+const overdue = records.filter(rec => {
+  const wait = now - new Date(rec.created_at).getTime();
+  return wait >= 5 * 60 * 1000;
+});
 
-            let msg = '🚨🚨 <b>【派車申請待審核提醒】</b> 🚨🚨\n\n';
-            msg += '⚠️ 以下申請超過5分鐘尚未處理，請立即審核！\n\n';
+const todayUrgent = records.filter(rec => rec.dispatch_date === today);
 
-            overdue.forEach(rec => {
-              let types = [];
-              try { types = JSON.parse(rec.dispatch_types); } catch(e) { types = [rec.dispatch_types]; }
-              const waitMin = Math.floor((now - new Date(rec.created_at).getTime()) / 60000);
-              msg += '━━━━━━━━━━━━━━━\n';
-              msg += `📋 <b>#${rec.request_no}</b>（等待 ${waitMin} 分鐘）\n`;
-              msg += `👤 申請人：${rec.users ? rec.users.name : ''}\n`;
-              msg += `📅 ${rec.dispatch_date} ${rec.dispatch_time}\n`;
-              msg += `📍 ${rec.start_location} → ${rec.destination}\n`;
-              msg += `🏷️ ${types.join(', ')}\n`;
-            });
+console.log(`Overdue: ${overdue.length}, Today urgent: ${todayUrgent.length}`);
+if (!overdue.length && !todayUrgent.length) return;
 
-            msg += '\n━━━━━━━━━━━━━━━\n';
-            msg += '🔔 請盡快登入系統處理！\n';
-            msg += `🌐 https://sunhsu-bot.vercel.app`;
+let msg = '';
+
+// 第一類：申請超過5分鐘未核准
+if (overdue.length) {
+  msg += '🚨🚨 <b>【派車申請待審核提醒】</b> 🚨🚨\n\n';
+  msg += '⚠️ 以下申請超過5分鐘尚未處理，請立即審核！\n\n';
+  overdue.forEach(rec => {
+    let types = [];
+    try { types = JSON.parse(rec.dispatch_types); } catch(e) { types = [rec.dispatch_types]; }
+    const waitMin = Math.floor((now - new Date(rec.created_at).getTime()) / 60000);
+    msg += '━━━━━━━━━━━━━━━\n';
+    msg += `📋 <b>#${rec.request_no}</b>（等待 ${waitMin} 分鐘）\n`;
+    msg += `👤 申請人：${rec.users ? rec.users.name : ''}\n`;
+    msg += `📅 ${rec.dispatch_date} ${rec.dispatch_time}\n`;
+    msg += `📍 ${rec.start_location} → ${rec.destination}\n`;
+    msg += `🏷️ ${types.join(', ')}\n`;
+  });
+  msg += '\n━━━━━━━━━━━━━━━\n';
+  msg += '🔔 請盡快登入系統處理！\n';
+  msg += `🌐 https://sunhsu-bot.vercel.app`;
+}
+
+// 第二類：今日派車但還未核准（緊急）
+if (todayUrgent.length) {
+  if (msg) msg += '\n\n';
+  msg += '🆘🆘 <b>【今日派車緊急提醒】</b> 🆘🆘\n\n';
+  msg += '❗ 以下派車申請日期為今天，但仍未核准！\n\n';
+  todayUrgent.forEach(rec => {
+    let types = [];
+    try { types = JSON.parse(rec.dispatch_types); } catch(e) { types = [rec.dispatch_types]; }
+    msg += '━━━━━━━━━━━━━━━\n';
+    msg += `🚨 <b>#${rec.request_no}</b>\n`;
+    msg += `👤 申請人：${rec.users ? rec.users.name : ''}\n`;
+    msg += `🕐 派車時間：${rec.dispatch_date} ${rec.dispatch_time}\n`;
+    msg += `📍 ${rec.start_location} → ${rec.destination}\n`;
+    msg += `🏷️ ${types.join(', ')}\n`;
+  });
+  msg += '\n━━━━━━━━━━━━━━━\n';
+  msg += '🔴 今日派車未安排，請立即處理！\n';
+  msg += `🌐 https://sunhsu-bot.vercel.app`;
+}
 
             // 發送 Telegram
             const tgUrl = `https://api.telegram.org/bot${TG_TOKEN}/sendMessage`;
